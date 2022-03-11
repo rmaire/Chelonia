@@ -2,9 +2,13 @@ package ch.uprisesoft.chelonia;
 
 import ch.uprisesoft.chelonia.turtle.TurtleManager;
 import ch.uprisesoft.chelonia.turtle.VectorFactory;
+import ch.uprisesoft.yali.ast.node.Node;
+import ch.uprisesoft.yali.ast.node.NodeType;
+import ch.uprisesoft.yali.exception.NodeTypeException;
 import ch.uprisesoft.yali.runtime.interpreter.Interpreter;
 import ch.uprisesoft.yali.runtime.io.InputGenerator;
 import ch.uprisesoft.yali.runtime.io.OutputObserver;
+import ch.uprisesoft.yali.scope.VariableNotFoundException;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputMultiplexer;
@@ -21,6 +25,8 @@ import com.strongjoshua.console.CommandExecutor;
 import com.strongjoshua.console.Console;
 import com.strongjoshua.console.GUIConsole;
 import java.util.List;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
 /**
  * First screen of the application. Displayed after the application is created.
@@ -47,10 +53,14 @@ public class MainScreen implements Screen, InputGenerator, OutputObserver {
     private int screenHeight;
     private final Chelonia parent;
     private Console console;
+    
+    private ResourceBundle messages;
 
     public MainScreen(Interpreter interpreter, Chelonia game) {
 
         parent = game;
+        
+        messages = ResourceBundle.getBundle("Translation", Locale.getDefault());
 
         yali = interpreter;
         
@@ -64,7 +74,7 @@ public class MainScreen implements Screen, InputGenerator, OutputObserver {
 
         input = new InputMultiplexer();
         gta = new GuiToggleAdapter();
-        console = new ReplConsole(yali);
+        console = new ReplConsole(yali, messages);
         
 //        console.setDisabled(false);
         console.setVisible(true);
