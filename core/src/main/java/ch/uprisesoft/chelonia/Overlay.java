@@ -99,13 +99,13 @@ public class Overlay extends Stage {
         guiViewport = new ScreenViewport(guiCamera);
         super.setViewport(guiViewport);
 
-        initReplWindow();
-        initToolsBarWindow();
-        initEditorWindow();
+//        initReplWindow();
+//        initToolsBarWindow();
+//        initEditorWindow();
 
-        commandWindow.setBounds(0, 0, screenWidth, replHeight);
-        toolsWindow.setBounds(toolsBarOriginX, toolsBarOriginY, toolsBarWidth, toolsBarHeight);
-        editorWindow.setBounds(editorOriginX, editorOriginY, editorWidth, editorHeight);
+//        commandWindow.setBounds(0, 0, screenWidth, replHeight);
+//        toolsWindow.setBounds(toolsBarOriginX, toolsBarOriginY, toolsBarWidth, toolsBarHeight);
+//        editorWindow.setBounds(editorOriginX, editorOriginY, editorWidth, editorHeight);
 
 //        commandWindow.debug();
 //        editorWindow.debug();
@@ -120,9 +120,9 @@ public class Overlay extends Stage {
         guiCamera.setToOrtho(false, screenWidth, screenHeight);
         guiViewport.update(screenWidth, screenHeight);
 
-        commandWindow.setBounds(0, 0, screenWidth, replHeight);
-        toolsWindow.setBounds(toolsBarOriginX, toolsBarOriginY, toolsBarWidth, toolsBarHeight);
-        editorWindow.setBounds(editorOriginX, editorOriginY, editorWidth, editorHeight);
+//        commandWindow.setBounds(0, 0, screenWidth, replHeight);
+//        toolsWindow.setBounds(toolsBarOriginX, toolsBarOriginY, toolsBarWidth, toolsBarHeight);
+//        editorWindow.setBounds(editorOriginX, editorOriginY, editorWidth, editorHeight);
     }
 
     public void update() {
@@ -302,24 +302,24 @@ public class Overlay extends Stage {
         screenWidth = width;
         screenHeight = height;
 
-        replHeight = gta.getReplHeight();
+//        replHeight = gta.getReplHeight();
 
-        if (gta.isEditorVisible()) {
-            editorWidth = screenWidth - gta.getToolsBarWidth();
-            editorHeight = screenHeight - gta.getReplHeight();
-            editorOriginX = 0;
-            editorOriginY = screenHeight - gta.getReplHeight();
-        } else {
-            editorWidth = 0;
-            editorHeight = 0;
-            editorOriginX = 0;
-            editorOriginY = 0;
-        }
+//        if (gta.isEditorVisible()) {
+//            editorWidth = screenWidth - gta.getToolsBarWidth();
+//            editorHeight = screenHeight - gta.getReplHeight();
+//            editorOriginX = 0;
+//            editorOriginY = screenHeight - gta.getReplHeight();
+//        } else {
+//            editorWidth = 0;
+//            editorHeight = 0;
+//            editorOriginX = 0;
+//            editorOriginY = 0;
+//        }
 
-        toolsBarWidth = gta.getToolsBarWidth();
-        toolsBarHeight = screenHeight - gta.getReplHeight();
-        toolsBarOriginX = screenWidth - gta.getToolsBarWidth();
-        toolsBarOriginY = gta.getReplHeight();
+//        toolsBarWidth = gta.getToolsBarWidth();
+//        toolsBarHeight = screenHeight - gta.getReplHeight();
+//        toolsBarOriginX = screenWidth - gta.getToolsBarWidth();
+//        toolsBarOriginY = gta.getReplHeight();
 
     }
 

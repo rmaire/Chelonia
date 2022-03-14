@@ -18,12 +18,17 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.strongjoshua.console.CommandExecutor;
 import com.strongjoshua.console.Console;
 import com.strongjoshua.console.GUIConsole;
+import com.strongjoshua.console.LogLevel;
+import com.strongjoshua.console.ReplConsole2;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -45,8 +50,8 @@ public class MainScreen implements Screen, InputGenerator, OutputObserver {
     private final TurtleManager turtle;
 
     // Other stuff
-    private final InputMultiplexer input;
-    private final GuiToggleAdapter gta;
+//    private final InputMultiplexer input;
+//    private final GuiToggleAdapter gta;
     private ShapeRenderer shapeRenderer;
     private Skin mainSkin;
     private int screenWidth;
@@ -72,11 +77,10 @@ public class MainScreen implements Screen, InputGenerator, OutputObserver {
         Workspace workspace = new Workspace(yali, parent);
         workspace.registerProcedures(yali);
 
-        input = new InputMultiplexer();
-        gta = new GuiToggleAdapter();
-        console = new ReplConsole(yali, messages);
+//        input = new InputMultiplexer();
+//        gta = new GuiToggleAdapter();
+        console = new ReplConsole2(yali, messages);
         
-//        console.setDisabled(false);
         console.setVisible(true);
         console.setCommandExecutor(new CommandExecutor());
         console.setDisplayKeyID(Input.Keys.F5);
@@ -85,8 +89,22 @@ public class MainScreen implements Screen, InputGenerator, OutputObserver {
         console.enableSubmitButton(true);
         console.setHoverColor(new Color(1f, 1f, 1f, 0.5f));
         console.setNoHoverColor(new Color(1f, 1f, 1f, 0.5f));
-//        console.getWindow().setColor(1f, 1f, 1f, 0.5f);
-//        console.setHoverColor(Color.CLEAR);
+        
+//        for(Actor a: console.getWindow().getChildren()) {
+//            if(a instanceof Table) {
+//                System.out.println("TABLE");
+//                for(Actor c: ((Table) a).getChildren()) {
+//                    if(c instanceof TextField) {
+//                        TextField tf = (TextField)c;
+//                        tf.setText("one\ntwo");
+//                        System.out.println("TEXT");
+//                    }
+////                    System.out.println(c.toString());
+////                    System.out.println("");
+//                }
+//            }
+////            System.out.println(a.toString());
+//        }
     }
 
     @Override
@@ -102,16 +120,9 @@ public class MainScreen implements Screen, InputGenerator, OutputObserver {
 
         mainSkin = new Skin(Gdx.files.internal("skin/uiskin.json"));
 
-//        gui = new Overlay(yali, mainSkin, gta);
-//        gui.init(screenWidth, screenHeight);
-
-//        input.addProcessor(gui.getAdapter());
-//        input.addProcessor(gui);
-//        Gdx.input.setInputProcessor(input);
         Gdx.input.setInputProcessor(console.getWindow().getStage());
         
         console.draw();
-
     }
 
     @Override
@@ -120,9 +131,8 @@ public class MainScreen implements Screen, InputGenerator, OutputObserver {
         worldViewport.update(screenWidth, screenHeight);
         worldCamera.setToOrtho(false, screenWidth, screenHeight);
         worldCamera.position.set(0, 0, 0);
-
-//        gui.resize(width, height);
-
+        
+        console.refresh();
     }
 
     @Override
@@ -144,13 +154,6 @@ public class MainScreen implements Screen, InputGenerator, OutputObserver {
         }
 
         shapeRenderer.end();
-
-//        if (gta.hasChanged()) {
-//            gui.resize(screenWidth, screenHeight);
-//        }
-//        gui.update();
-//        gui.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
-//        gui.draw();
         
         console.draw();
     }
@@ -178,6 +181,7 @@ public class MainScreen implements Screen, InputGenerator, OutputObserver {
 
     @Override
     public void inform(String output) {
+        console.log(output, LogLevel.SUCCESS);
 //        gui.inform(output);
     }
 
