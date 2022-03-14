@@ -471,8 +471,6 @@ public class ReplConsole2 extends AbstractConsole {
         private ConsoleContext context;
         private Cell<TextButton> submitCell;
 
-        private String procDefinition = "";
-
         ConsoleDisplay(Skin skin) {
             try {
                 root = ClassReflection.newInstance(tableClass);
@@ -592,6 +590,7 @@ public class ReplConsole2 extends AbstractConsole {
             }
             scroll.validate();
             scroll.setScrollPercentY(1);
+            input.validate();
 
         }
 
@@ -738,13 +737,11 @@ public class ReplConsole2 extends AbstractConsole {
                 if (keycode == Keys.ENTER && !hidden) {
                     if (input.getText().trim().startsWith("to ")) {
                         procDefinitionMode = true;
-                        procDefinition = input.getText();
 
-                        input.setText(input.getText() + "\n");
-                        input.setPrefRows(input.getText().lines().count() + 1);
-                        input.setCursorPosition(input.getText().length());
-                        input.invalidate();
-
+                        input.appendText("\n");
+                        input.setPrefRows(input.getLines());
+                        input.moveCursorLine(input.getLines());
+                        input.invalidateHierarchy();
                         return false;
                     }
                     commandHistory.getNextCommand(); // Makes up arrow key repeat the same command after pressing enter
@@ -767,8 +764,7 @@ public class ReplConsole2 extends AbstractConsole {
                     }
                     input.setText(commandCompleter.next());
                     input.setCursorPosition(input.getText().length());
-                    input.invalidate();
-                    
+
                     return true;
                 }
             } else {
@@ -777,16 +773,15 @@ public class ReplConsole2 extends AbstractConsole {
                         commandHistory.getNextCommand(); // Makes up arrow key repeat the same command after pressing enter
                         procDefinitionMode = false;
 
-                        input.setText(input.getText() + "\n");
                         input.setPrefRows(1);
-                        input.invalidate();
+                        input.invalidateHierarchy();
 
                         return display.submit();
                     }
-                    input.setText(input.getText() + "\n");
-                    input.setCursorPosition(input.getText().length());
-                    input.setPrefRows(input.getText().lines().count() + 1);
-                    input.invalidate();
+                    input.appendText("\n");
+                    input.setPrefRows(input.getLines());
+                    input.moveCursorLine(input.getLines());
+                    input.invalidateHierarchy();
 
                     return false;
                 }
@@ -794,60 +789,6 @@ public class ReplConsole2 extends AbstractConsole {
 
             return false;
         }
-
-//        @Override
-//        public boolean keyDown(InputEvent event, int keycode) {
-//            if (disabled) {
-//                return false;
-//            }
-//
-//            // reset command completer because input string may have changed
-//            if (keycode != Keys.TAB) {
-//                commandCompleter.reset();
-//            }
-//
-//            if (keycode == Keys.ENTER && !hidden && !procDefinitionMode) {
-//                if (input.getText().trim().startsWith("to ")) {
-//                    procDefinitionMode = true;
-//                    procDefinition += input.getText()+"\n";
-//                    input.setText(input.getText()+"\n");
-//                    input.setPrefRows(input.getText().lines().count()+1);
-//                    return true;
-//                }
-//                commandHistory.getNextCommand(); // Makes up arrow key repeat the same command after pressing enter
-//                return display.submit();
-//            } else if (keycode == Keys.ENTER && !hidden && procDefinitionMode) {
-//                if (input.getText().trim().endsWith("end")) {
-//                    procDefinitionMode = false;
-//                    procDefinition += input.getText()+"\n";
-//                    System.out.println("TEXT: " + input.getText());
-//                    return display.submit();
-//                }
-//                procDefinition += input.getText()+"\n";
-//                input.setText(procDefinition);
-//                input.setPrefRows(input.getText().lines().count()+1);
-//            } else if (keycode == Keys.UP && !hidden) {
-//                input.setText(commandHistory.getPreviousCommand());
-//                input.setCursorPosition(input.getText().length());
-//                return true;
-//            } else if (keycode == Keys.DOWN && !hidden) {
-//                input.setText(commandHistory.getNextCommand());
-//                input.setCursorPosition(input.getText().length());
-//                return true;
-//            } else if (keycode == Keys.TAB && !hidden) {
-//                String s = input.getText();
-//                if (s.length() == 0) {
-//                    return false;
-//                }
-//                if (commandCompleter.isNew()) {
-//                    commandCompleter.set(exec, s);
-//                }
-//                input.setText(commandCompleter.next());
-//                input.setCursorPosition(input.getText().length());
-//                return true;
-//            }
-//            return false;
-//        }
     }
 
     private class DisplayListener extends InputListener {
