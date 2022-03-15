@@ -47,7 +47,7 @@ import java.util.ResourceBundle;
  *
  * @author StrongJoshua
  */
-public class ReplConsole2 extends AbstractConsole {
+public class ReplConsole extends AbstractConsole {
 
     private int keyID;
 
@@ -86,7 +86,7 @@ public class ReplConsole2 extends AbstractConsole {
      *
      * @see Console#dispose()
      */
-    public ReplConsole2() {
+    public ReplConsole() {
         this(new Skin(Gdx.files.classpath("default_skin/uiskin.json")));
     }
 
@@ -101,13 +101,13 @@ public class ReplConsole2 extends AbstractConsole {
      * contain a font called 'default-font'.
      * @see Console#dispose()
      */
-    public ReplConsole2(Interpreter it, ResourceBundle messages) {
+    public ReplConsole(Interpreter it, ResourceBundle messages) {
         this();
         this.it = it;
         this.messages = messages;
     }
 
-    public ReplConsole2(Skin skin) {
+    public ReplConsole(Skin skin) {
         this(skin, true);
     }
 
@@ -121,7 +121,7 @@ public class ReplConsole2 extends AbstractConsole {
      * @param useMultiplexer If internal multiplexer should be used
      * @see Console#dispose()
      */
-    public ReplConsole2(boolean useMultiplexer) {
+    public ReplConsole(boolean useMultiplexer) {
         this(new Skin(Gdx.files.classpath("default_skin/uiskin.json")), useMultiplexer);
     }
 
@@ -137,7 +137,7 @@ public class ReplConsole2 extends AbstractConsole {
      * @param useMultiplexer If internal multiplexer should be used
      * @see Console#dispose()
      */
-    public ReplConsole2(Skin skin, boolean useMultiplexer) {
+    public ReplConsole(Skin skin, boolean useMultiplexer) {
         this(skin, useMultiplexer, Keys.APOSTROPHE);
     }
 
@@ -154,12 +154,12 @@ public class ReplConsole2 extends AbstractConsole {
      * apostrophe: ')
      * @see Console#dispose()
      */
-    public ReplConsole2(Skin skin, boolean useMultiplexer, int keyID) {
+    public ReplConsole(Skin skin, boolean useMultiplexer, int keyID) {
         this(skin, useMultiplexer, keyID, Window.class, Table.class, "default-rect", TextArea.class, TextButton.class,
                 Label.class, ScrollPane.class);
     }
 
-    public ReplConsole2(Skin skin, boolean useMultiplexer, int keyID, Class<? extends Window> windowClass,
+    public ReplConsole(Skin skin, boolean useMultiplexer, int keyID, Class<? extends Window> windowClass,
             Class<? extends Table> tableClass, String tableBackground, Class<? extends TextArea> textFieldClass,
             Class<? extends TextButton> textButtonClass, Class<? extends Label> labelClass,
             Class<? extends ScrollPane> scrollPaneClass) {
@@ -590,8 +590,8 @@ public class ReplConsole2 extends AbstractConsole {
             }
             scroll.validate();
             scroll.setScrollPercentY(1);
-            input.validate();
-
+            System.out.println("refresh()");
+//            input.validate();
         }
 
         private void setHidden(boolean h) {
@@ -697,10 +697,6 @@ public class ReplConsole2 extends AbstractConsole {
             }
         }
 
-        public void setInputHeight(int height) {
-            input.setPrefRows(height);
-        }
-
         void showSubmit(boolean show) {
             submit.setVisible(show);
             submitCell.size(show ? submit.getPrefWidth() : 0, show ? submit.getPrefHeight() : 0);
@@ -738,9 +734,10 @@ public class ReplConsole2 extends AbstractConsole {
                     if (input.getText().trim().startsWith("to ")) {
                         procDefinitionMode = true;
 
+                        input.setPrefRows(input.getLines() + 1);
                         input.appendText("\n");
-                        input.setPrefRows(input.getLines());
-                        input.moveCursorLine(input.getLines());
+                        input.pack();
+                        input.setCursorPosition(input.getText().length());
                         input.invalidateHierarchy();
                         return false;
                     }
@@ -778,9 +775,11 @@ public class ReplConsole2 extends AbstractConsole {
 
                         return display.submit();
                     }
+                    
+                    input.setPrefRows(input.getLines() + 1);
                     input.appendText("\n");
-                    input.setPrefRows(input.getLines());
-                    input.moveCursorLine(input.getLines());
+                    input.pack();
+                    input.setCursorPosition(input.getText().length());
                     input.invalidateHierarchy();
 
                     return false;

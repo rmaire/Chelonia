@@ -28,7 +28,7 @@ import com.strongjoshua.console.CommandExecutor;
 import com.strongjoshua.console.Console;
 import com.strongjoshua.console.GUIConsole;
 import com.strongjoshua.console.LogLevel;
-import com.strongjoshua.console.ReplConsole2;
+import com.strongjoshua.console.ReplConsole;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -79,7 +79,7 @@ public class MainScreen implements Screen, InputGenerator, OutputObserver {
 
 //        input = new InputMultiplexer();
 //        gta = new GuiToggleAdapter();
-        console = new ReplConsole2(yali, messages);
+        console = new ReplConsole(yali, messages);
         
         console.setVisible(true);
         console.setCommandExecutor(new CommandExecutor());
