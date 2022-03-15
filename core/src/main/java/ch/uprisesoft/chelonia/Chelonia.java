@@ -4,7 +4,7 @@ import ch.uprisesoft.yali.runtime.interpreter.Interpreter;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.kotcrab.vis.ui.VisUI;
+//import com.kotcrab.vis.ui.VisUI;
 
 public class Chelonia extends Game {
 
@@ -20,7 +20,7 @@ public class Chelonia extends Game {
 
     @Override
     public void create() {
-        VisUI.load();
+//        VisUI.load();
         this.replScreen = new MainScreen(yali, this);
 //        this.editScreen = new EditScreen(yali, this);
         skin = new Skin(Gdx.files.internal("holo/skin/dark-hdpi/Holo-dark-hdpi.json"));
@@ -30,7 +30,7 @@ public class Chelonia extends Game {
     @Override
     public void dispose() {
         skin.dispose();
-        VisUI.dispose();
+//        VisUI.dispose();
     }
 
     protected void switchToRepl() {

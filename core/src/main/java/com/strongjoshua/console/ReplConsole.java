@@ -101,8 +101,8 @@ public class ReplConsole extends AbstractConsole {
      * contain a font called 'default-font'.
      * @see Console#dispose()
      */
-    public ReplConsole(Interpreter it, ResourceBundle messages) {
-        this();
+    public ReplConsole(Interpreter it, ResourceBundle messages, Skin skin) {
+        this(skin);
         this.it = it;
         this.messages = messages;
     }
@@ -590,8 +590,6 @@ public class ReplConsole extends AbstractConsole {
             }
             scroll.validate();
             scroll.setScrollPercentY(1);
-            System.out.println("refresh()");
-//            input.validate();
         }
 
         private void setHidden(boolean h) {

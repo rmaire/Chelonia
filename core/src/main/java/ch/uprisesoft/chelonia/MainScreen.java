@@ -40,7 +40,6 @@ public class MainScreen implements Screen, InputGenerator, OutputObserver {
 
     // Overlay specifics
 //    private Overlay gui;
-
 //    // World GUI specifics
     private OrthographicCamera worldCamera;
     private Viewport worldViewport;
@@ -50,61 +49,47 @@ public class MainScreen implements Screen, InputGenerator, OutputObserver {
     private final TurtleManager turtle;
 
     // Other stuff
-//    private final InputMultiplexer input;
-//    private final GuiToggleAdapter gta;
     private ShapeRenderer shapeRenderer;
     private Skin mainSkin;
     private int screenWidth;
     private int screenHeight;
     private final Chelonia parent;
     private Console console;
-    
+
     private ResourceBundle messages;
 
     public MainScreen(Interpreter interpreter, Chelonia game) {
 
         parent = game;
-        
+
         messages = ResourceBundle.getBundle("Translation", Locale.getDefault());
+        mainSkin = new Skin(Gdx.files.internal("skin/uiskin.json"));
+//        mainSkin = new Skin(Gdx.files.internal("commodore64ui/uiskin.json"));
+
+        if (mainSkin == null) {
+            System.out.println("NOOOOOO!");
+        }
 
         yali = interpreter;
-        
+
         yali.loadStdLib(this, this);
-        
+
         turtle = new TurtleManager();
         turtle.registerProcedures(yali);
-        
+
         Workspace workspace = new Workspace(yali, parent);
         workspace.registerProcedures(yali);
 
-//        input = new InputMultiplexer();
-//        gta = new GuiToggleAdapter();
-        console = new ReplConsole(yali, messages);
-        
+        console = new ReplConsole(yali, messages, mainSkin);
+
         console.setVisible(true);
         console.setCommandExecutor(new CommandExecutor());
         console.setDisplayKeyID(Input.Keys.F5);
         console.setPosition(0, 0);
         console.setSizePercent(100, 30);
         console.enableSubmitButton(true);
-        console.setHoverColor(new Color(1f, 1f, 1f, 0.5f));
-        console.setNoHoverColor(new Color(1f, 1f, 1f, 0.5f));
-        
-//        for(Actor a: console.getWindow().getChildren()) {
-//            if(a instanceof Table) {
-//                System.out.println("TABLE");
-//                for(Actor c: ((Table) a).getChildren()) {
-//                    if(c instanceof TextField) {
-//                        TextField tf = (TextField)c;
-//                        tf.setText("one\ntwo");
-//                        System.out.println("TEXT");
-//                    }
-////                    System.out.println(c.toString());
-////                    System.out.println("");
-//                }
-//            }
-////            System.out.println(a.toString());
-//        }
+//        console.setHoverColor(new Color(1f, 1f, 1f, 0.5f));
+//        console.setNoHoverColor(new Color(1f, 1f, 1f, 0.5f));
     }
 
     @Override
@@ -118,10 +103,8 @@ public class MainScreen implements Screen, InputGenerator, OutputObserver {
 
         shapeRenderer = new ShapeRenderer();
 
-        mainSkin = new Skin(Gdx.files.internal("skin/uiskin.json"));
-
         Gdx.input.setInputProcessor(console.getWindow().getStage());
-        
+
         console.draw();
     }
 
@@ -131,7 +114,7 @@ public class MainScreen implements Screen, InputGenerator, OutputObserver {
         worldViewport.update(screenWidth, screenHeight);
         worldCamera.setToOrtho(false, screenWidth, screenHeight);
         worldCamera.position.set(0, 0, 0);
-        
+
         console.refresh();
     }
 
@@ -154,7 +137,7 @@ public class MainScreen implements Screen, InputGenerator, OutputObserver {
         }
 
         shapeRenderer.end();
-        
+
         console.draw();
     }
 
@@ -200,9 +183,9 @@ public class MainScreen implements Screen, InputGenerator, OutputObserver {
     public void hide() {
         // This method is called when another screen replaces this one.
     }
-    
+
     public void edit(String editorContent) {
 //        gui.edit(editorContent);
-        
+
     }
 }
