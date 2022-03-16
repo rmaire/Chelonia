@@ -19,9 +19,7 @@ import ch.uprisesoft.yali.ast.node.List;
 import ch.uprisesoft.yali.ast.node.Node;
 import ch.uprisesoft.yali.ast.node.NodeType;
 import ch.uprisesoft.yali.ast.node.Procedure;
-import ch.uprisesoft.yali.ast.node.word.FloatWord;
 import ch.uprisesoft.yali.exception.NodeTypeException;
-import java.util.ArrayList;
 import ch.uprisesoft.yali.runtime.interpreter.Interpreter;
 import ch.uprisesoft.yali.runtime.procedures.ProcedureProvider;
 import ch.uprisesoft.yali.scope.Scope;
@@ -128,8 +126,8 @@ public class TurtleManager implements ProcedureProvider {
 
         TurtlePosition tp = turtle.getPositions().get(turtle.getPositions().size() - 1);
         List pos = new List();
-        pos.addChild(Node.flt(new Double(tp.x)));
-        pos.addChild(Node.flt(new Double(tp.y)));
+        pos.addChild(Node.flt(Double.valueOf(tp.x)));
+        pos.addChild(Node.flt(Double.valueOf(tp.y)));
 
         return pos;
     }
