@@ -16,11 +16,11 @@ public class Chelonia extends Game {
 
     public Chelonia() {
         yali = new Interpreter();
+//        yali.addTracer(new YaliTracer());
     }
 
     @Override
     public void create() {
-//        VisUI.load();
         this.replScreen = new MainScreen(yali, this);
 //        this.editScreen = new EditScreen(yali, this);
         skin = new Skin(Gdx.files.internal("holo/skin/dark-hdpi/Holo-dark-hdpi.json"));
@@ -30,7 +30,6 @@ public class Chelonia extends Game {
     @Override
     public void dispose() {
         skin.dispose();
-//        VisUI.dispose();
     }
 
     protected void switchToRepl() {
