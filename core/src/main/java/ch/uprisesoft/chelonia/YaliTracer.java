@@ -5,6 +5,7 @@
  */
 package ch.uprisesoft.chelonia;
 
+import ch.uprisesoft.yali.ast.node.Call;
 import ch.uprisesoft.yali.ast.node.Node;
 import ch.uprisesoft.yali.runtime.interpreter.Tracer;
 import ch.uprisesoft.yali.scope.Environment;
@@ -74,6 +75,34 @@ public class YaliTracer implements Tracer {
     @Override
     public void resume(Node val) {
         
+    }
+
+    @Override
+    public void schedule(String name, Call call, Environment env) {
+    }
+
+    @Override
+    public void unschedule(String name, Call call, Environment env) {
+    }
+
+    @Override
+    public void arg(String name, Node val, Environment env) {
+    }
+
+    @Override
+    public void scope(String name, Environment env) {
+    }
+
+    @Override
+    public void unscope(String name, Environment env) {
+    }
+
+    @Override
+    public void load(Node val) {
+    }
+
+    @Override
+    public void returnTick(Node val, String pos) {
     }
     
 }
