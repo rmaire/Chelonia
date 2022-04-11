@@ -59,7 +59,7 @@ public class Workspace implements ProcedureProvider {
 
     @Override
     public Interpreter registerProcedures(Interpreter it) {
-        it.env().define(new Procedure("edit", (scope, val) -> this.edit(scope, val), "name"));
+        it.env().define(new Procedure("edit", (scope, val) -> this.edit(scope, val), (scope, val) -> Node.none(), "name"));
         
         return it;
     }

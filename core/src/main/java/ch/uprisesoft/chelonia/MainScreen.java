@@ -2,31 +2,22 @@ package ch.uprisesoft.chelonia;
 
 import ch.uprisesoft.chelonia.turtle.TurtleManager;
 import ch.uprisesoft.chelonia.turtle.VectorFactory;
-import ch.uprisesoft.yali.ast.node.Node;
-import ch.uprisesoft.yali.ast.node.NodeType;
-import ch.uprisesoft.yali.exception.NodeTypeException;
 import ch.uprisesoft.yali.runtime.interpreter.Interpreter;
 import ch.uprisesoft.yali.runtime.io.InputGenerator;
 import ch.uprisesoft.yali.runtime.io.OutputObserver;
-import ch.uprisesoft.yali.scope.VariableNotFoundException;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.strongjoshua.console.CommandExecutor;
 import com.strongjoshua.console.Console;
-import com.strongjoshua.console.GUIConsole;
 import com.strongjoshua.console.LogLevel;
 import com.strongjoshua.console.ReplConsole;
 import java.util.List;
@@ -64,11 +55,6 @@ public class MainScreen implements Screen, InputGenerator, OutputObserver {
 
         messages = ResourceBundle.getBundle("Translation", Locale.getDefault());
         mainSkin = new Skin(Gdx.files.internal("skin/uiskin.json"));
-//        mainSkin = new Skin(Gdx.files.internal("commodore64ui/uiskin.json"));
-
-        if (mainSkin == null) {
-            System.out.println("NOOOOOO!");
-        }
 
         yali = interpreter;
 

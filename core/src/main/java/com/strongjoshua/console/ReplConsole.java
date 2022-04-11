@@ -663,7 +663,7 @@ public class ReplConsole extends AbstractConsole {
                     log(
                             String.format(
                                     "; " + messages.getString("function_not_found"),
-                                    nte.getNode().getToken().getLexeme(),
+                                    nte.getNode().token().get(0).getLexeme(),
                                     nte.getReceived()
                             ),
                             LogLevel.ERROR);
@@ -679,7 +679,7 @@ public class ReplConsole extends AbstractConsole {
                     log(
                             String.format(
                                     "; " + messages.getString("not_expected"),
-                                    nte.getNode().getToken().getLexeme(),
+                                    nte.getNode().token().get(0).getLexeme(),
                                     nte.getExpected(),
                                     nte.getReceived()
                             ),

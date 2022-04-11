@@ -3,5 +3,5 @@ eclipse.project.name = appName + '-core'
 
 dependencies {
 	api "com.badlogicgames.gdx:gdx:$gdxVersion"
-        compile "ch.uprisesoft:yali:0.0.2"
+        compile "ch.uprisesoft:yali:0.0.3"
 }

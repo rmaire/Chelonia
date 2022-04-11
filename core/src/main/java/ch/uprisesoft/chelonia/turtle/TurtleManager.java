@@ -136,14 +136,14 @@ public class TurtleManager implements ProcedureProvider {
 
     @Override
     public Interpreter registerProcedures(Interpreter it) {
-        it.env().define(new Procedure("fd", (scope, val) -> this.fd(scope, val), "dist"));
-        it.env().define(new Procedure("bk", (scope, val) -> this.bk(scope, val), "dist"));
-        it.env().define(new Procedure("rt", (scope, val) -> this.rt(scope, val), "angle"));
-        it.env().define(new Procedure("lt", (scope, val) -> this.lt(scope, val), "angle"));
-        it.env().define(new Procedure("cs", (scope, val) -> this.cs(scope, val)));
-        it.env().define(new Procedure("st", (scope, val) -> this.st(scope, val)));
-        it.env().define(new Procedure("ht", (scope, val) -> this.ht(scope, val)));
-        it.env().define(new Procedure("turtlepos", (scope, val) -> this.turtlepos(scope, val)));
+        it.env().define(new Procedure("fd", (scope, val) -> this.fd(scope, val), (scope, val) -> Node.none(), "dist"));
+        it.env().define(new Procedure("bk", (scope, val) -> this.bk(scope, val), (scope, val) -> Node.none(), "dist"));
+        it.env().define(new Procedure("rt", (scope, val) -> this.rt(scope, val), (scope, val) -> Node.none(), "angle"));
+        it.env().define(new Procedure("lt", (scope, val) -> this.lt(scope, val), (scope, val) -> Node.none(), "angle"));
+        it.env().define(new Procedure("cs", (scope, val) -> this.cs(scope, val), (scope, val) -> Node.none()));
+        it.env().define(new Procedure("st", (scope, val) -> this.st(scope, val), (scope, val) -> Node.none()));
+        it.env().define(new Procedure("ht", (scope, val) -> this.ht(scope, val), (scope, val) -> Node.none()));
+        it.env().define(new Procedure("turtlepos", (scope, val) -> this.turtlepos(scope, val), (scope, val) -> Node.none()));
         return it;
     }
 }
