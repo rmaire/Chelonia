@@ -1,42 +1,70 @@
 package ch.uprisesoft.chelonia;
 
 import ch.uprisesoft.yali.runtime.interpreter.Interpreter;
+import ch.uprisesoft.yali.runtime.io.InputGenerator;
+import ch.uprisesoft.yali.runtime.io.OutputObserver;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-//import com.kotcrab.vis.ui.VisUI;
+import com.kotcrab.vis.ui.VisUI;
 
-public class Chelonia extends Game {
+public class Chelonia extends Game implements InputGenerator, OutputObserver{
 
     private final Interpreter yali;
-    private MainScreen replScreen;
-//    private EditScreen editScreen;
+    private ReplScreen replScreen;
+    private EditScreen editScreen;
 
     Skin skin;
 
     public Chelonia() {
+        System.out.println("NEW CHELONIA!");;
+
         yali = new Interpreter();
-//        yali.addTracer(new YaliTracer());
+
+        yali.loadStdLib(this, this);
+
+//        this.replScreen = new ReplScreen(yali, this);
+//        this.editScreen = new EditScreen(yali, this);
     }
 
     @Override
     public void create() {
-        this.replScreen = new MainScreen(yali, this);
-//        this.editScreen = new EditScreen(yali, this);
-        skin = new Skin(Gdx.files.internal("holo/skin/dark-hdpi/Holo-dark-hdpi.json"));
+        VisUI.load();
+        this.replScreen = new ReplScreen(yali, this);
+        
+        this.editScreen = new EditScreen(yali, this);
+        skin = new Skin(Gdx.files.internal("skin/uiskin.json"));
         setScreen(replScreen);
     }
 
     @Override
     public void dispose() {
         skin.dispose();
+//        setScreen(basicEditor);
+        VisUI.dispose();
     }
 
     protected void switchToRepl() {
-        setScreen(replScreen);
+//        setScreen(replScreen);
     }
 
-    protected void edit(String editorContents) {
-        replScreen.edit(editorContents);
+    protected void switchToEditor(String editorContents) {
+        setScreen(editScreen);
+        editScreen.setText(editorContents);
+    }
+
+    @Override
+    public String request() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public String requestLine() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void inform(String output) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

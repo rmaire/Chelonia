@@ -1,8 +1,8 @@
 package ch.uprisesoft.chelonia.lwjgl3;
 
-import ch.uprisesoft.chelonia.Chelonia;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
+import ch.uprisesoft.chelonia.Chelonia;
 
 /** Launches the desktop (LWJGL3) application. */
 public class Lwjgl3Launcher {
