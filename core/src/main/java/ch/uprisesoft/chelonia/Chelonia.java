@@ -10,35 +10,24 @@ import com.kotcrab.vis.ui.VisUI;
 
 public class Chelonia extends Game implements InputGenerator, OutputObserver{
 
-    private final Interpreter yali;
-    private IdeScreen replScreen;
+    private Interpreter yali;
+    private IdeScreen ide;
 
-    Skin skin;
-
-    public Chelonia() {
-        System.out.println("NEW CHELONIA!");;
-
-        yali = new Interpreter();
-
-        yali.loadStdLib(this, this);
-
-//        this.replScreen = new ReplScreen(yali, this);
-//        this.editScreen = new EditScreen(yali, this);
-    }
+    private Skin skin;
 
     @Override
     public void create() {
         VisUI.load();
-        this.replScreen = new IdeScreen(yali, this);
-        
-        skin = new Skin(Gdx.files.internal("skin/uiskin.json"));
-        setScreen(replScreen);
+        yali = new Interpreter();
+        yali.loadStdLib(ide, ide);
+        ide = new IdeScreen(yali, this);
+        skin = new Skin(Gdx.files.internal("commodore64ui/uiskin.json"));
+        setScreen(ide);
     }
 
     @Override
     public void dispose() {
         skin.dispose();
-//        setScreen(basicEditor);
         VisUI.dispose();
     }
 

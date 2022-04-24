@@ -14,7 +14,7 @@ import java.util.List;
  */
 public class Turtle {
 
-    private float pps = 200;
+    private float pps = 0;
     private int actualPosIndex = 1;
 
     private List<TurtlePosition> positions;
@@ -22,14 +22,15 @@ public class Turtle {
     private Boolean visible = true;
 
     public Turtle() {
-        this(new TurtlePosition(0, 0, 0));
+        this(new TurtlePosition(0, 0, 0), 10);
     }
 
-    public Turtle(TurtlePosition init) {
+    public Turtle(TurtlePosition init, int turtlespeed) {
         positions = new ArrayList<>();
         animatedPositions = new ArrayList<>();
         positions.add(init);
         animatedPositions.add(init);
+        pps = turtlespeed*20;
     }
 
     public List<TurtlePosition> getPositions() {
@@ -49,10 +50,14 @@ public class Turtle {
     public List<TurtlePosition> getPositions(float delta) {
 
         if (pps == 0) {
+            animatedPositions.clear();
+            animatedPositions.addAll(positions);
             return positions;
         }
 
         if (positions.size() < 2) {
+            animatedPositions.clear();
+            animatedPositions.addAll(positions);
             return positions;
         }
 
@@ -68,8 +73,9 @@ public class Turtle {
         float angle = positions.get(actualPosIndex - 1).angle;
         TurtlePosition actualPos = animatedPositions.get(actualPosIndex);
         TurtlePosition targetPos = positions.get(actualPosIndex);
-        float x;
-        float y;
+        float newx;
+        float newy;
+        float newangle = targetPos.angle;
         boolean finishedX = false;
         boolean finishedY = false;
 
@@ -77,16 +83,18 @@ public class Turtle {
         boolean xGoesPositive = (targetPos.x - actualPos.x) > 0;
         if (xGoesPositive) {
             if (actualPos.x < targetPos.x && (actualPos.x + dt) < targetPos.x) {
-                x = actualPos.x + dt * run(angle);
+                newx = actualPos.x + dt * run(angle);
+                newangle = actualPos.angle;
             } else {
-                x = targetPos.x;
+                newx = targetPos.x;
                 finishedX = true;
             }
         } else {
             if (actualPos.x > targetPos.x && (actualPos.x - dt) > targetPos.x) {
-                x = actualPos.x + dt * run(angle);
+                newx = actualPos.x + dt * run(angle);
+                newangle = actualPos.angle;
             } else {
-                x = targetPos.x;
+                newx = targetPos.x;
                 finishedX = true;
             }
         }
@@ -95,16 +103,18 @@ public class Turtle {
         boolean yGoesPositive = (targetPos.y - actualPos.y) > 0;
         if (yGoesPositive) {
             if (actualPos.y < targetPos.y && (actualPos.y + dt) < targetPos.y) {
-                y = actualPos.y + dt * rise(angle);
+                newy = actualPos.y + dt * rise(angle);
+                newangle = actualPos.angle;
             } else {
-                y = targetPos.y;
+                newy = targetPos.y;
                 finishedY = true;
             }
         } else {
             if (actualPos.y > targetPos.y && (actualPos.y - dt) > targetPos.y) {
-                y = actualPos.y + dt * rise(angle);
+                newy = actualPos.y + dt * rise(angle);
+                newangle = actualPos.angle;
             } else {
-                y = targetPos.y;
+                newy = targetPos.y;
                 finishedY = true;
             }
         }
@@ -113,40 +123,16 @@ public class Turtle {
             actualPosIndex++;
         }
 
-        TurtlePosition newPos = new TurtlePosition(x, y, targetPos.angle);
+        TurtlePosition newPos = new TurtlePosition(newx, newy, newangle);
         animatedPositions.remove(animatedPositions.size() - 1);
         animatedPositions.add(newPos);
 
         return animatedPositions;
     }
 
-    public List<TurtlePosition> getHead() {
-        List<TurtlePosition> newPositions = new ArrayList<>();
-        newPositions.addAll(positions);
-        if (visible) {
-            List<TurtlePosition> oldPositions = new ArrayList<>();
-            oldPositions.addAll(positions);
-
-            this.lt(90);
-            this.fd(5);
-            this.rt(180 - 71.565f);
-            this.fd(16);
-            this.rt(180 - 36.87f);
-            this.fd(16);
-            this.rt(180 - 71.565f);
-            this.fd(5);
-            newPositions.clear();
-            newPositions.addAll(positions);
-            positions.clear();
-            positions.addAll(oldPositions);
-        }
-        return newPositions;
-    }
-
     public List<TurtlePosition> getPositionsWithHead(float delta) {
         getPositions(delta);
         List<TurtlePosition> newPositions = new ArrayList<>();
-//        newPositions.addAll(animatedPositions);
         List<TurtlePosition> oldPositions = new ArrayList<>();
         oldPositions.addAll(positions);
         positions.clear();
@@ -161,7 +147,6 @@ public class Turtle {
             this.fd(16);
             this.rt(180 - 71.565f);
             this.fd(5);
-
         }
 
         newPositions.clear();

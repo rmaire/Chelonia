@@ -6,7 +6,6 @@ import ch.uprisesoft.yali.ast.node.Node;
 import ch.uprisesoft.yali.runtime.interpreter.Interpreter;
 import ch.uprisesoft.yali.runtime.io.InputGenerator;
 import ch.uprisesoft.yali.runtime.io.OutputObserver;
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Input.Keys;
@@ -18,7 +17,6 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
@@ -76,12 +74,8 @@ public class IdeScreen implements Screen, InputGenerator, OutputObserver {
     private final TurtleManager turtle;
 
     public IdeScreen(Interpreter interpreter, Chelonia game) {
-        System.out.println("New ReplScreen");
-
-//        parent = game;
 
         yali = interpreter;
-        yali.loadStdLib(this, this);
         turtle = new TurtleManager();
         turtle.registerProcedures(yali);
 
@@ -142,7 +136,8 @@ public class IdeScreen implements Screen, InputGenerator, OutputObserver {
 
     @Override
     public void inform(String output) {
-        inform(output);
+        commandArea.appendText(output);
+//        inform(output);
     }
 
     @Override
@@ -199,6 +194,8 @@ public class IdeScreen implements Screen, InputGenerator, OutputObserver {
         saveButton = new VisTextButton("Save", new ChangeListener() {
             @Override
             public void changed(ChangeListener.ChangeEvent ce, Actor actor) {
+                yali.run(yali.read(editArea.getText()));
+                editorCollapsed = true;
 //                save(editArea.getText());
             }
         });
@@ -310,8 +307,6 @@ public class IdeScreen implements Screen, InputGenerator, OutputObserver {
                     editorParentWindow.addAction(Actions.removeActor());
                 }
                 editorCollapsed = !editorCollapsed;
-
-                System.out.println(editorCollapsed);
             }
         }
     };

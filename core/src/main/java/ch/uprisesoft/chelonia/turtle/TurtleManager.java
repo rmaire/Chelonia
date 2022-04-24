@@ -128,6 +128,7 @@ public class TurtleManager implements ProcedureProvider {
         List pos = new List();
         pos.addChild(Node.flt(Double.valueOf(tp.x)));
         pos.addChild(Node.flt(Double.valueOf(tp.y)));
+        pos.addChild(Node.flt(Double.valueOf(tp.angle)));
 
         return pos;
     }
