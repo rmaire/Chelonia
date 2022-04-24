@@ -85,37 +85,16 @@ public class ReplScreen implements Screen, InputGenerator, OutputObserver {
         turtle = new TurtleManager();
         turtle.registerProcedures(yali);
 
-//        Workspace workspace = new Workspace(yali, parent);
-//        yali.registerNativeFunctions(workspace);
-//        repl = new Repl(yali, this);
         mainSkin = new Skin(Gdx.files.internal("skin/uiskin.json"));
-//        initRepl();
-//        sizeRepl();
-//        initEditor();
-//        sizeEditor();
         camera = new OrthographicCamera();
 
         shapeRenderer = new ShapeRenderer();
-
-//        multiplexer = new InputMultiplexer();
-//        multiplexer.addProcessor(replAdapter);
-//        multiplexer.addProcessor(repl);
-//        Gdx.input.setInputProcessor(multiplexer);
-
     }
 
     @Override
     public void resize(int width, int height) {
-
-//        commandWindow.setBounds(0, 0, width, COMMAND_HEIGHT);
-        sizeRepl();
-        sizeEditor();
-
-//        float cameraWidth = Gdx.graphics.getWidth();
-//        float cameraHeight = Gdx.graphics.getHeight();
         camera.setToOrtho(false, width, height);
         camera.position.set(0, 0, 0);
-
     }
 
     private void sizeRepl() {
@@ -142,6 +121,9 @@ public class ReplScreen implements Screen, InputGenerator, OutputObserver {
     public void render(float delta) {
         Gdx.gl.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        
+        sizeRepl();
+        sizeEditor();
 
         camera.update();
 
@@ -199,13 +181,7 @@ public class ReplScreen implements Screen, InputGenerator, OutputObserver {
         multiplexer.addProcessor(replAdapter);
         multiplexer.addProcessor(repl);
         Gdx.input.setInputProcessor(multiplexer);
-        
-//        Gdx.input.setInputProcessor(multiplexer);
         commandArea.setCursorAtTextEnd();
-//        turtle.getTurtle().fd(100);
-//        turtle.getTurtle().st();
-
-//        repl = new Repl(yali, this);
     }
 
     @Override
@@ -217,7 +193,7 @@ public class ReplScreen implements Screen, InputGenerator, OutputObserver {
     @Override
     public void resume() {
         System.out.println("Resume called");
-//        Gdx.input.setInputProcessor(repl);
+        Gdx.input.setInputProcessor(multiplexer);
         commandArea.setCursorAtTextEnd();
     }
 
@@ -323,8 +299,8 @@ public class ReplScreen implements Screen, InputGenerator, OutputObserver {
                 } else if (Gdx.input.isKeyPressed(Input.Keys.F1)) {
                     System.out.println("YEEEES");
                     replCollapsed = !replCollapsed;
-                    sizeRepl();
-                    sizeEditor();
+//                    sizeRepl();
+//                    sizeEditor();
                 }
             }
         });
@@ -348,7 +324,6 @@ public class ReplScreen implements Screen, InputGenerator, OutputObserver {
 
         @Override
         public boolean keyDown(int keycode) {
-//            System.out.println(keycode + " -> " + Keys.toString(keycode));
             actOnKey(keycode);
             return false;
         }
@@ -361,9 +336,6 @@ public class ReplScreen implements Screen, InputGenerator, OutputObserver {
                     commandWindow.addAction(Actions.removeActor());
                 }
                 replCollapsed = !replCollapsed;
-                
-                sizeRepl();
-                sizeEditor();
             }
 
             if (keycode == Keys.F2) {
@@ -376,12 +348,7 @@ public class ReplScreen implements Screen, InputGenerator, OutputObserver {
                 editorCollapsed = !editorCollapsed;
                 
                 System.out.println(editorCollapsed);
-                
-                sizeRepl();
-                sizeEditor();
             }
-
         }
     };
-
 }

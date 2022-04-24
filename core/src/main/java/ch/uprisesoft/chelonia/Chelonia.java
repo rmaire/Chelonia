@@ -12,7 +12,6 @@ public class Chelonia extends Game implements InputGenerator, OutputObserver{
 
     private final Interpreter yali;
     private ReplScreen replScreen;
-    private EditScreen editScreen;
 
     Skin skin;
 
@@ -32,7 +31,6 @@ public class Chelonia extends Game implements InputGenerator, OutputObserver{
         VisUI.load();
         this.replScreen = new ReplScreen(yali, this);
         
-        this.editScreen = new EditScreen(yali, this);
         skin = new Skin(Gdx.files.internal("skin/uiskin.json"));
         setScreen(replScreen);
     }
@@ -42,15 +40,6 @@ public class Chelonia extends Game implements InputGenerator, OutputObserver{
         skin.dispose();
 //        setScreen(basicEditor);
         VisUI.dispose();
-    }
-
-    protected void switchToRepl() {
-//        setScreen(replScreen);
-    }
-
-    protected void switchToEditor(String editorContents) {
-        setScreen(editScreen);
-        editScreen.setText(editorContents);
     }
 
     @Override

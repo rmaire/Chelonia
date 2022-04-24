@@ -14,7 +14,12 @@ import java.util.List;
  */
 public class Turtle {
 
+    private float lastDelta = 0;
+    private float speed = 10;
+    private int actualPos = 0;
+    
     private List<TurtlePosition> positions;
+    private List<TurtlePosition> animatedPositions;
     private Boolean visible = true;
 
     public Turtle() {
@@ -23,11 +28,19 @@ public class Turtle {
 
     public Turtle(TurtlePosition init) {
         positions = new ArrayList<>();
+        animatedPositions = new ArrayList<>();
         positions.add(init);
     }
 
     public List<TurtlePosition> getPositions() {
         return positions;
+    }
+    
+    public List<TurtlePosition> getPositions(float dt) {
+//        animatedPositions.clear();
+//        animatedPositions.addAll(positions);
+        
+        return animatedPositions;
     }
     
     public List<TurtlePosition> getHead() {
@@ -93,6 +106,8 @@ public class Turtle {
 
     public void cs() {
         positions.clear();
+        animatedPositions.clear();
+        actualPos = 0;
         positions.add(new TurtlePosition(0, 0, 0));
     }
 }
