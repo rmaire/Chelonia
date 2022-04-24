@@ -121,7 +121,7 @@ public class ReplScreen implements Screen, InputGenerator, OutputObserver {
     public void render(float delta) {
         Gdx.gl.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        
+
         sizeRepl();
         sizeEditor();
 
@@ -131,7 +131,8 @@ public class ReplScreen implements Screen, InputGenerator, OutputObserver {
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
         shapeRenderer.setColor(Color.WHITE);
 
-        List<Vector2> positions = VectorFactory.fromTurtlePositionList(turtle.getTurtle().getHead());
+//        List<Vector2> positions = VectorFactory.fromTurtlePositionList(turtle.getTurtle().getHead());
+        List<Vector2> positions = VectorFactory.fromTurtlePositionList(turtle.getTurtle().getPositions(delta));
 
         for (int i = 1; i < positions.size(); i++) {
             shapeRenderer.line(positions.get(i - 1), positions.get(i));
@@ -169,14 +170,12 @@ public class ReplScreen implements Screen, InputGenerator, OutputObserver {
     @Override
     public void show() {
         System.out.println("Show called");
-        
+
         initRepl();
         sizeRepl();
         initEditor();
         sizeEditor();
-        
-        repl.setDebugAll(true);
-        
+
         multiplexer = new InputMultiplexer();
         multiplexer.addProcessor(replAdapter);
         multiplexer.addProcessor(repl);
@@ -330,7 +329,7 @@ public class ReplScreen implements Screen, InputGenerator, OutputObserver {
 
         private void actOnKey(int keycode) {
             if (keycode == Keys.F1) {
-                if(replCollapsed) {
+                if (replCollapsed) {
                     repl.addActor(commandWindow);
                 } else {
                     commandWindow.addAction(Actions.removeActor());
@@ -339,14 +338,14 @@ public class ReplScreen implements Screen, InputGenerator, OutputObserver {
             }
 
             if (keycode == Keys.F2) {
-                
-                if(editorCollapsed) {
+
+                if (editorCollapsed) {
                     repl.addActor(editorParentWindow);
                 } else {
                     editorParentWindow.addAction(Actions.removeActor());
                 }
                 editorCollapsed = !editorCollapsed;
-                
+
                 System.out.println(editorCollapsed);
             }
         }
