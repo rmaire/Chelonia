@@ -36,35 +36,23 @@ public class Turtle {
         return positions;
     }
 
-    private float toUnitCircle(float angle) {
-        return (360-angle)%360;
-    }
-    
-        private float run(float angle) {
-//        return Math.cos(Math.toRadians(toUnitCircle(angle));
+    private float run(float angle) {
         double run = Math.sin(Math.toRadians(angle));
-//        if(run<0.00000001) {
-//            run = Math.round(run);
-//        }
-        return (float)run;
+        return (float) run;
     }
-    
+
     private float rise(float angle) {
-//        return Math.cos(Math.toRadians(toUnitCircle(angle));
         double rise = Math.cos(Math.toRadians(angle));
-//        if(rise<0.00000001) {
-//            rise = Math.round(rise);
-//        }
-        return (float)rise;
+        return (float) rise;
     }
-    
+
     public List<TurtlePosition> getPositions(float delta) {
-        
-        if(pps == 0) {
+
+        if (pps == 0) {
             return positions;
         }
-        
-        if(positions.size() <2) {
+
+        if (positions.size() < 2) {
             return positions;
         }
 
@@ -77,7 +65,7 @@ public class Turtle {
         }
 
         float dt = delta * pps;
-        float angle = positions.get(actualPosIndex-1).angle;
+        float angle = positions.get(actualPosIndex - 1).angle;
         TurtlePosition actualPos = animatedPositions.get(actualPosIndex);
         TurtlePosition targetPos = positions.get(actualPosIndex);
         float x;
@@ -89,38 +77,38 @@ public class Turtle {
         boolean xGoesPositive = (targetPos.x - actualPos.x) > 0;
         if (xGoesPositive) {
             if (actualPos.x < targetPos.x && (actualPos.x + dt) < targetPos.x) {
-                x = actualPos.x + dt*run(angle);
+                x = actualPos.x + dt * run(angle);
             } else {
                 x = targetPos.x;
                 finishedX = true;
             }
         } else {
             if (actualPos.x > targetPos.x && (actualPos.x - dt) > targetPos.x) {
-                x = actualPos.x + dt*run(angle);
+                x = actualPos.x + dt * run(angle);
             } else {
                 x = targetPos.x;
                 finishedX = true;
             }
         }
-        
+
         // check if y goes in positive direction
         boolean yGoesPositive = (targetPos.y - actualPos.y) > 0;
         if (yGoesPositive) {
             if (actualPos.y < targetPos.y && (actualPos.y + dt) < targetPos.y) {
-                y = actualPos.y + dt*rise(angle);
+                y = actualPos.y + dt * rise(angle);
             } else {
                 y = targetPos.y;
                 finishedY = true;
             }
         } else {
             if (actualPos.y > targetPos.y && (actualPos.y - dt) > targetPos.y) {
-                y = actualPos.y + dt*rise(angle);
+                y = actualPos.y + dt * rise(angle);
             } else {
                 y = targetPos.y;
                 finishedY = true;
             }
         }
-        
+
         if (finishedX && finishedY) {
             actualPosIndex++;
         }

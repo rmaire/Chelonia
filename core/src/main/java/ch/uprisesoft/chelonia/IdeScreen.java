@@ -38,10 +38,10 @@ import java.util.stream.Collectors;
 /**
  * First screen of the application. Displayed after the application is created.
  */
-public class ReplScreen implements Screen, InputGenerator, OutputObserver {
+public class IdeScreen implements Screen, InputGenerator, OutputObserver {
 
     private final Chelonia parent;
-    private Stage repl;
+    private Stage main;
 
     private InputMultiplexer multiplexer;
 
@@ -75,7 +75,7 @@ public class ReplScreen implements Screen, InputGenerator, OutputObserver {
     private final Interpreter yali;
     private final TurtleManager turtle;
 
-    public ReplScreen(Interpreter interpreter, Chelonia game) {
+    public IdeScreen(Interpreter interpreter, Chelonia game) {
         System.out.println("New ReplScreen");
 
         parent = game;
@@ -98,14 +98,14 @@ public class ReplScreen implements Screen, InputGenerator, OutputObserver {
     }
 
     private void sizeRepl() {
-        repl.getViewport().update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        main.getViewport().update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         if (!replCollapsed) {
             commandWindow.setBounds(0, 0, Gdx.graphics.getWidth(), COMMAND_HEIGHT);
         }
     }
 
     private void sizeEditor() {
-        repl.getViewport().update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        main.getViewport().update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         if (!editorCollapsed && !replCollapsed) {
             editorParentWindow.setBounds(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight() - COMMAND_HEIGHT);
         } else if (!editorCollapsed && replCollapsed) {
@@ -141,14 +141,14 @@ public class ReplScreen implements Screen, InputGenerator, OutputObserver {
         shapeRenderer.end();
 
 //        commandScrollPane.scrollTo(0, commandArea.getHeight() - commandArea.getCursorY(), 0, commandArea.getStyle().font.getLineHeight());
-        repl.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
-        repl.draw();
+        main.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
+        main.draw();
     }
 
     @Override
     public void dispose() {
         System.out.println("Dispose called");
-        repl.dispose();
+        main.dispose();
 
     }
 
@@ -178,7 +178,7 @@ public class ReplScreen implements Screen, InputGenerator, OutputObserver {
 
         multiplexer = new InputMultiplexer();
         multiplexer.addProcessor(replAdapter);
-        multiplexer.addProcessor(repl);
+        multiplexer.addProcessor(main);
         Gdx.input.setInputProcessor(multiplexer);
         commandArea.setCursorAtTextEnd();
     }
@@ -248,7 +248,7 @@ public class ReplScreen implements Screen, InputGenerator, OutputObserver {
     }
 
     private void initRepl() {
-        repl = new Stage(new ScreenViewport());
+        main = new Stage(new ScreenViewport());
 
 //        mainSkin = new Skin(Gdx.files.internal("skin/uiskin.json"));
         commandArea = new HighlightTextArea("> ");
@@ -310,8 +310,8 @@ public class ReplScreen implements Screen, InputGenerator, OutputObserver {
         commandWindow.add(commandScrollPane).fill().expand();
         commandWindow.setColor(1f, 1f, 1f, 0.5f);
 
-        repl.addActor(commandWindow);
-        repl.setKeyboardFocus(commandArea);
+        main.addActor(commandWindow);
+        main.setKeyboardFocus(commandArea);
         commandArea.setCursorAtTextEnd();
     }
 
@@ -330,7 +330,7 @@ public class ReplScreen implements Screen, InputGenerator, OutputObserver {
         private void actOnKey(int keycode) {
             if (keycode == Keys.F1) {
                 if (replCollapsed) {
-                    repl.addActor(commandWindow);
+                    main.addActor(commandWindow);
                 } else {
                     commandWindow.addAction(Actions.removeActor());
                 }
@@ -340,7 +340,7 @@ public class ReplScreen implements Screen, InputGenerator, OutputObserver {
             if (keycode == Keys.F2) {
 
                 if (editorCollapsed) {
-                    repl.addActor(editorParentWindow);
+                    main.addActor(editorParentWindow);
                 } else {
                     editorParentWindow.addAction(Actions.removeActor());
                 }

@@ -11,7 +11,7 @@ import com.kotcrab.vis.ui.VisUI;
 public class Chelonia extends Game implements InputGenerator, OutputObserver{
 
     private final Interpreter yali;
-    private ReplScreen replScreen;
+    private IdeScreen replScreen;
 
     Skin skin;
 
@@ -29,7 +29,7 @@ public class Chelonia extends Game implements InputGenerator, OutputObserver{
     @Override
     public void create() {
         VisUI.load();
-        this.replScreen = new ReplScreen(yali, this);
+        this.replScreen = new IdeScreen(yali, this);
         
         skin = new Skin(Gdx.files.internal("skin/uiskin.json"));
         setScreen(replScreen);
