@@ -40,7 +40,7 @@ import java.util.stream.Collectors;
  */
 public class IdeScreen implements Screen, InputGenerator, OutputObserver {
 
-    private final Chelonia parent;
+//    private final Chelonia parent;
     private Stage main;
 
     private InputMultiplexer multiplexer;
@@ -78,7 +78,7 @@ public class IdeScreen implements Screen, InputGenerator, OutputObserver {
     public IdeScreen(Interpreter interpreter, Chelonia game) {
         System.out.println("New ReplScreen");
 
-        parent = game;
+//        parent = game;
 
         yali = interpreter;
         yali.loadStdLib(this, this);
@@ -95,26 +95,6 @@ public class IdeScreen implements Screen, InputGenerator, OutputObserver {
     public void resize(int width, int height) {
         camera.setToOrtho(false, width, height);
         camera.position.set(0, 0, 0);
-    }
-
-    private void sizeRepl() {
-        main.getViewport().update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        if (!replCollapsed) {
-            commandWindow.setBounds(0, 0, Gdx.graphics.getWidth(), COMMAND_HEIGHT);
-        }
-    }
-
-    private void sizeEditor() {
-        main.getViewport().update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        if (!editorCollapsed && !replCollapsed) {
-            editorParentWindow.setBounds(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight() - COMMAND_HEIGHT);
-        } else if (!editorCollapsed && replCollapsed) {
-            editorParentWindow.setBounds(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        } else if (editorCollapsed) {
-            editorParentWindow.setBounds(0, 0, 0, 0);
-        }
-
-        editorParentWindow.setPosition(0, COMMAND_HEIGHT);
     }
 
     @Override
@@ -350,4 +330,24 @@ public class IdeScreen implements Screen, InputGenerator, OutputObserver {
             }
         }
     };
+    
+    private void sizeRepl() {
+        main.getViewport().update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        if (!replCollapsed) {
+            commandWindow.setBounds(0, 0, Gdx.graphics.getWidth(), COMMAND_HEIGHT);
+        }
+    }
+
+    private void sizeEditor() {
+        main.getViewport().update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        if (!editorCollapsed && !replCollapsed) {
+            editorParentWindow.setBounds(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight() - COMMAND_HEIGHT);
+        } else if (!editorCollapsed && replCollapsed) {
+            editorParentWindow.setBounds(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        } else if (editorCollapsed) {
+            editorParentWindow.setBounds(0, 0, 0, 0);
+        }
+
+        editorParentWindow.setPosition(0, COMMAND_HEIGHT);
+    }
 }
