@@ -143,6 +143,34 @@ public class Turtle {
         return newPositions;
     }
 
+    public List<TurtlePosition> getPositionsWithHead(float delta) {
+        getPositions(delta);
+        List<TurtlePosition> newPositions = new ArrayList<>();
+//        newPositions.addAll(animatedPositions);
+        List<TurtlePosition> oldPositions = new ArrayList<>();
+        oldPositions.addAll(positions);
+        positions.clear();
+        positions.addAll(animatedPositions);
+
+        if (visible) {
+            this.lt(90);
+            this.fd(5);
+            this.rt(180 - 71.565f);
+            this.fd(16);
+            this.rt(180 - 36.87f);
+            this.fd(16);
+            this.rt(180 - 71.565f);
+            this.fd(5);
+
+        }
+
+        newPositions.clear();
+        newPositions.addAll(positions);
+        positions.clear();
+        positions.addAll(oldPositions);
+        return newPositions;
+    }
+
     public void fd(int steps) {
         TurtlePosition oldpos = positions.get(positions.size() - 1);
         float angle = oldpos.angle;

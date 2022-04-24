@@ -112,7 +112,7 @@ public class IdeScreen implements Screen, InputGenerator, OutputObserver {
         shapeRenderer.setColor(Color.WHITE);
 
 //        List<Vector2> positions = VectorFactory.fromTurtlePositionList(turtle.getTurtle().getHead());
-        List<Vector2> positions = VectorFactory.fromTurtlePositionList(turtle.getTurtle().getPositions(delta));
+        List<Vector2> positions = VectorFactory.fromTurtlePositionList(turtle.getTurtle().getPositionsWithHead(delta));
 
         for (int i = 1; i < positions.size(); i++) {
             shapeRenderer.line(positions.get(i - 1), positions.get(i));
@@ -127,9 +127,7 @@ public class IdeScreen implements Screen, InputGenerator, OutputObserver {
 
     @Override
     public void dispose() {
-        System.out.println("Dispose called");
         main.dispose();
-
     }
 
     @Override
@@ -149,8 +147,6 @@ public class IdeScreen implements Screen, InputGenerator, OutputObserver {
 
     @Override
     public void show() {
-        System.out.println("Show called");
-
         initRepl();
         sizeRepl();
         initEditor();
@@ -165,21 +161,16 @@ public class IdeScreen implements Screen, InputGenerator, OutputObserver {
 
     @Override
     public void pause() {
-        System.out.println("pause called");
-        // Invoked when your application is paused.
     }
 
     @Override
     public void resume() {
-        System.out.println("Resume called");
         Gdx.input.setInputProcessor(multiplexer);
         commandArea.setCursorAtTextEnd();
     }
 
     @Override
     public void hide() {
-        System.out.println("Hide called");
-        // This method is called when another screen replaces this one.
     }
 
     private void initEditor() {
@@ -221,16 +212,12 @@ public class IdeScreen implements Screen, InputGenerator, OutputObserver {
         buttonTable.add(cancelButton);
         editorParentWindow.add(buttonTable).bottom().right();
 
-//        editorParentTable.setFillParent(true);
-//        editorParentTable.pad(5);
         editorParentWindow.setColor(1f, 1f, 1f, 0.5f);
-//        repl.addActor(editorParentWindow);
     }
 
     private void initRepl() {
         main = new Stage(new ScreenViewport());
 
-//        mainSkin = new Skin(Gdx.files.internal("skin/uiskin.json"));
         commandArea = new HighlightTextArea("> ");
 
         commandArea.setFocusTraversal(false);
@@ -278,8 +265,6 @@ public class IdeScreen implements Screen, InputGenerator, OutputObserver {
                 } else if (Gdx.input.isKeyPressed(Input.Keys.F1)) {
                     System.out.println("YEEEES");
                     replCollapsed = !replCollapsed;
-//                    sizeRepl();
-//                    sizeEditor();
                 }
             }
         });
