@@ -1,6 +1,7 @@
 package ch.uprisesoft.chelonia;
 
 import ch.uprisesoft.chelonia.turtle.TurtleManager;
+import ch.uprisesoft.chelonia.turtle.TurtlePosition;
 import ch.uprisesoft.chelonia.turtle.VectorFactory;
 import ch.uprisesoft.yali.ast.node.Node;
 import ch.uprisesoft.yali.runtime.interpreter.Interpreter;
@@ -74,7 +75,6 @@ public class IdeScreen implements Screen, InputGenerator, OutputObserver {
     private final TurtleManager turtle;
 
     public IdeScreen(Interpreter interpreter, Chelonia game) {
-
         yali = interpreter;
         turtle = new TurtleManager();
         turtle.registerProcedures(yali);
@@ -105,11 +105,14 @@ public class IdeScreen implements Screen, InputGenerator, OutputObserver {
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
         shapeRenderer.setColor(Color.WHITE);
 
-//        List<Vector2> positions = VectorFactory.fromTurtlePositionList(turtle.getTurtle().getHead());
-        List<Vector2> positions = VectorFactory.fromTurtlePositionList(turtle.getTurtle().getPositionsWithHead(delta));
-
-        for (int i = 1; i < positions.size(); i++) {
-            shapeRenderer.line(positions.get(i - 1), positions.get(i));
+        List<TurtlePosition> positions = turtle.getTurtle().getPositionsWithHead(delta);
+        
+        for(int i = 1; i < positions.size(); i++) {
+            if(positions.get(i-1).pendown) {
+                Vector2 origin = new Vector2(positions.get(i - 1).x, positions.get(i - 1).y);
+                Vector2 dest = new Vector2(positions.get(i).x, positions.get(i).y);
+                shapeRenderer.line(origin, dest);
+            }
         }
 
         shapeRenderer.end();

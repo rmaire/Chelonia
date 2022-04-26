@@ -88,7 +88,7 @@ public class TurtleManager implements ProcedureProvider {
 
     public Node rt(Scope scope, java.util.List<Node> args) {
         Node arg = args.get(0);
-        if (!(arg.type().equals(NodeType.INTEGER) || arg.type().equals(NodeType.INTEGER))) {
+        if (!(arg.type().equals(NodeType.INTEGER) || arg.type().equals(NodeType.FLOAT))) {
             throw new NodeTypeException(arg, arg.type(), NodeType.INTEGER, NodeType.FLOAT);
         }
 
@@ -117,6 +117,33 @@ public class TurtleManager implements ProcedureProvider {
         turtle.ht();
         return turtlepos();
     }
+    
+    public Node pd(Scope scope, java.util.List<Node> args) {
+        turtle.pd();
+        return turtlepos();
+    }
+    
+    public Node pu(Scope scope, java.util.List<Node> args) {
+        turtle.pu();
+        return turtlepos();
+    }
+    
+    public Node ts(Scope scope, java.util.List<Node> args) {
+        Node arg = args.get(0);
+        if (!(arg.type().equals(NodeType.INTEGER) || arg.type().equals(NodeType.FLOAT))) {
+            throw new NodeTypeException(arg, arg.type(), NodeType.INTEGER, NodeType.FLOAT);
+        }
+
+        if (arg.type().equals(NodeType.FLOAT)) {
+            turtle.ts(args.get(0).toFloatWord().getFloat().intValue());
+        }
+
+        if (arg.type().equals(NodeType.INTEGER)) {
+            turtle.ts(args.get(0).toIntegerWord().getInteger());
+        }
+
+        return turtlepos();
+    }
 
     public Node turtlepos(Scope scope, java.util.List<Node> args) {
         return turtlepos();
@@ -124,7 +151,7 @@ public class TurtleManager implements ProcedureProvider {
 
     private Node turtlepos() {
 
-        TurtlePosition tp = turtle.getPositions().get(turtle.getPositions().size() - 1);
+        TurtlePosition tp = turtle.getPosition();
         List pos = new List();
         pos.addChild(Node.flt(Double.valueOf(tp.x)));
         pos.addChild(Node.flt(Double.valueOf(tp.y)));
@@ -135,13 +162,16 @@ public class TurtleManager implements ProcedureProvider {
 
     @Override
     public Interpreter registerProcedures(Interpreter it) {
-        it.env().define(new Procedure("fd", (scope, val) -> this.fd(scope, val), (scope, val) -> Node.none(), "dist"));
-        it.env().define(new Procedure("bk", (scope, val) -> this.bk(scope, val), (scope, val) -> Node.none(), "dist"));
-        it.env().define(new Procedure("rt", (scope, val) -> this.rt(scope, val), (scope, val) -> Node.none(), "angle"));
-        it.env().define(new Procedure("lt", (scope, val) -> this.lt(scope, val), (scope, val) -> Node.none(), "angle"));
+        it.env().define(new Procedure("fd", (scope, val) -> this.fd(scope, val), (scope, val) -> Node.none(), "__dist__"));
+        it.env().define(new Procedure("bk", (scope, val) -> this.bk(scope, val), (scope, val) -> Node.none(), "__dist__"));
+        it.env().define(new Procedure("rt", (scope, val) -> this.rt(scope, val), (scope, val) -> Node.none(), "__angle__"));
+        it.env().define(new Procedure("lt", (scope, val) -> this.lt(scope, val), (scope, val) -> Node.none(), "__angle__"));
         it.env().define(new Procedure("cs", (scope, val) -> this.cs(scope, val), (scope, val) -> Node.none()));
         it.env().define(new Procedure("st", (scope, val) -> this.st(scope, val), (scope, val) -> Node.none()));
         it.env().define(new Procedure("ht", (scope, val) -> this.ht(scope, val), (scope, val) -> Node.none()));
+        it.env().define(new Procedure("pd", (scope, val) -> this.pd(scope, val), (scope, val) -> Node.none()));
+        it.env().define(new Procedure("pu", (scope, val) -> this.pu(scope, val), (scope, val) -> Node.none()));
+        it.env().define(new Procedure("ts", (scope, val) -> this.ts(scope, val), (scope, val) -> Node.none(), "__speed__"));
         it.env().define(new Procedure("turtlepos", (scope, val) -> this.turtlepos(scope, val), (scope, val) -> Node.none()));
         return it;
     }

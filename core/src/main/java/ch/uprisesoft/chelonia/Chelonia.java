@@ -19,8 +19,9 @@ public class Chelonia extends Game implements InputGenerator, OutputObserver{
     public void create() {
         VisUI.load();
         yali = new Interpreter();
-        yali.loadStdLib(ide, ide);
+        
         ide = new IdeScreen(yali, this);
+        yali.loadStdLib(ide, ide);
         skin = new Skin(Gdx.files.internal("commodore64ui/uiskin.json"));
         setScreen(ide);
     }
