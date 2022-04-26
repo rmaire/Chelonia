@@ -49,11 +49,7 @@ public class Turtle {
             return animatedPositions;
         }
         
-        // If it's first element, just copy the actual in case pendown has changed
-        if(animationStarted) {
-            animatedPositions.clear();
-            animationStarted = !animationStarted;
-        }
+        
         
         // No animation necessary
         if (pps == 0) {
@@ -66,6 +62,12 @@ public class Turtle {
         if (!positions.get(actualPosIndex - 1).pendown) {
             animatedPositions.add(positions.get(actualPosIndex++));
             return animatedPositions;
+        }
+        
+        // If it's first element, just copy the actual in case pendown has changed
+        if(animationStarted) {
+            animatedPositions.clear();
+            animationStarted = !animationStarted;
         }
         
         // Get next element if counter was increased
@@ -130,8 +132,6 @@ public class Turtle {
             }
         }
 
-//        TurtlePosition newPos = new TurtlePosition(newx, newy, newangle, positions.get(actualPosIndex).pendown);
-        
         if (finishedX && finishedY) {
             actualPosIndex++;
         }
@@ -207,12 +207,12 @@ public class Turtle {
 
     public void lt(float degrees) {
         TurtlePosition oldpos = positions.get(positions.size() - 1);
-        positions.set(positions.size() - 1, new TurtlePosition(oldpos.x, oldpos.y, oldpos.angle - degrees, pendown));
+        positions.set(positions.size() - 1, new TurtlePosition(oldpos.x, oldpos.y, oldpos.angle - degrees, oldpos.pendown));
     }
 
     public void rt(float degrees) {
         TurtlePosition oldpos = positions.get(positions.size() - 1);
-        positions.set(positions.size() - 1, new TurtlePosition(oldpos.x, oldpos.y, oldpos.angle + degrees, pendown));
+        positions.set(positions.size() - 1, new TurtlePosition(oldpos.x, oldpos.y, oldpos.angle + degrees, oldpos.pendown));
     }
 
     public void st() {
