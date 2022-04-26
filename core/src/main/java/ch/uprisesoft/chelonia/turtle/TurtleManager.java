@@ -144,6 +144,42 @@ public class TurtleManager implements ProcedureProvider {
 
         return turtlepos();
     }
+    
+    public Node setxy(Scope scope, java.util.List<Node> args) {
+        Node x = args.get(0);
+        Node y = args.get(1);
+        
+        double xf = 0;
+        double yf = 0;
+        
+        if (!(x.type().equals(NodeType.INTEGER) || x.type().equals(NodeType.FLOAT))) {
+            throw new NodeTypeException(x, x.type(), NodeType.INTEGER, NodeType.FLOAT);
+        }
+        
+        if (!(y.type().equals(NodeType.INTEGER) || y.type().equals(NodeType.FLOAT))) {
+            throw new NodeTypeException(y, y.type(), NodeType.INTEGER, NodeType.FLOAT);
+        }
+
+        if (x.type().equals(NodeType.FLOAT)) {
+            xf = x.toFloatWord().getFloat();
+        }
+
+        if (x.type().equals(NodeType.INTEGER)) {
+            xf = x.toIntegerWord().getInteger();
+        }
+
+        if (y.type().equals(NodeType.FLOAT)) {
+            yf = y.toFloatWord().getFloat();
+        }
+
+        if (y.type().equals(NodeType.INTEGER)) {
+            yf = y.toIntegerWord().getInteger();
+        }
+        
+        turtle.setxy(xf, yf);
+        
+        return turtlepos();
+    }
 
     public Node turtlepos(Scope scope, java.util.List<Node> args) {
         return turtlepos();
@@ -171,6 +207,7 @@ public class TurtleManager implements ProcedureProvider {
         it.env().define(new Procedure("ht", (scope, val) -> this.ht(scope, val), (scope, val) -> Node.none()));
         it.env().define(new Procedure("pd", (scope, val) -> this.pd(scope, val), (scope, val) -> Node.none()));
         it.env().define(new Procedure("pu", (scope, val) -> this.pu(scope, val), (scope, val) -> Node.none()));
+        it.env().define(new Procedure("setxy", (scope, val) -> this.setxy(scope, val), (scope, val) -> Node.none(), "__x__", "__y__"));
         it.env().define(new Procedure("ts", (scope, val) -> this.ts(scope, val), (scope, val) -> Node.none(), "__speed__"));
         it.env().define(new Procedure("turtlepos", (scope, val) -> this.turtlepos(scope, val), (scope, val) -> Node.none()));
         return it;

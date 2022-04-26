@@ -16,7 +16,7 @@ public class Turtle {
 
     // Animation speed. 0 means no animation
     private float pps = 0;
-    
+
     // Position of animation. Points to the actual TurtlePosition in positions
     private int actualPosIndex = 1;
 
@@ -39,45 +39,43 @@ public class Turtle {
     }
 
     public TurtlePosition getPosition() {
-        return positions.get(positions.size()-1);
+        return positions.get(positions.size() - 1);
     }
 
     public List<TurtlePosition> getPositions(float delta) {
-        
+
         // Nothing more to do, just return calculated positions
         if (actualPosIndex == positions.size()) {
             return animatedPositions;
         }
-        
-        
-        
+
         // No animation necessary
         if (pps == 0) {
             animatedPositions.clear();
             animatedPositions.addAll(positions);
             return animatedPositions;
         }
-        
+
         // If pen is up, line doesn't has to be animated
         if (!positions.get(actualPosIndex - 1).pendown) {
             animatedPositions.add(positions.get(actualPosIndex++));
             return animatedPositions;
         }
-        
+
         // If it's first element, just copy the actual in case pendown has changed
-        if(animationStarted) {
+        if (animationStarted) {
             animatedPositions.clear();
             animationStarted = !animationStarted;
         }
-        
+
         // Get next element if counter was increased
         if (animatedPositions.size() <= actualPosIndex) {
             animatedPositions.add(positions.get(actualPosIndex - 1));
         }
 
         float dt = delta * pps;
-        
-        TurtlePosition actualPos = animatedPositions.get(animatedPositions.size()-1);
+
+        TurtlePosition actualPos = animatedPositions.get(animatedPositions.size() - 1);
         TurtlePosition targetPos = positions.get(actualPosIndex);
         float angle = actualPos.angle;
         float newx;
@@ -88,7 +86,7 @@ public class Turtle {
 
         // check if x goes in positive direction
         boolean xGoesPositive = (targetPos.x - actualPos.x) > 0;
-        
+
         // If x goes up, the comparison has to be smaller than...
         if (xGoesPositive) {
             if (actualPos.x < targetPos.x && (actualPos.x + dt * run(angle)) < targetPos.x) {
@@ -112,7 +110,7 @@ public class Turtle {
         // check if y goes in positive direction
         boolean yGoesPositive = (targetPos.y - actualPos.y) > 0;
         if (yGoesPositive) {
-            
+
             // If y goes right, the comparison has to be smaller than...
             if (actualPos.y < targetPos.y && (actualPos.y + dt * rise(angle)) < targetPos.y) {
                 newy = actualPos.y + dt * rise(angle);
@@ -135,13 +133,13 @@ public class Turtle {
         if (finishedX && finishedY) {
             actualPosIndex++;
         }
-        
-        TurtlePosition newPos = new TurtlePosition(newx, newy, newangle, positions.get(actualPosIndex-1).pendown);
+
+        TurtlePosition newPos = new TurtlePosition(newx, newy, newangle, positions.get(actualPosIndex - 1).pendown);
         animatedPositions.set(animatedPositions.size() - 1, newPos);
-        
+
         return animatedPositions;
     }
-    
+
     private float run(float angle) {
         double run = Math.sin(Math.toRadians(angle));
         return (float) run;
@@ -152,17 +150,15 @@ public class Turtle {
         return (float) rise;
     }
 
-
     public List<TurtlePosition> getPositionsWithHead(float delta) {
         getPositions(delta);
-        List<TurtlePosition> newPositions = new ArrayList<>();
-        List<TurtlePosition> oldPositions = new ArrayList<>();
-        oldPositions.addAll(positions);
-        positions.clear();
-        positions.addAll(animatedPositions);
 
         if (visible) {
-
+            List<TurtlePosition> newPositions = new ArrayList<>();
+            List<TurtlePosition> oldPositions = new ArrayList<>();
+            oldPositions.addAll(positions);
+            positions.clear();
+            positions.addAll(animatedPositions);
             boolean oldpen = pendown;
             this.pd();
 
@@ -176,13 +172,16 @@ public class Turtle {
             this.fd(5);
 
             pendown = oldpen;
+
+            newPositions.clear();
+            newPositions.addAll(positions);
+            positions.clear();
+            positions.addAll(oldPositions);
+            return newPositions;
+        } else {
+            return animatedPositions;
         }
 
-        newPositions.clear();
-        newPositions.addAll(positions);
-        positions.clear();
-        positions.addAll(oldPositions);
-        return newPositions;
     }
 
     public void fd(int steps) {
@@ -233,6 +232,10 @@ public class Turtle {
         pendown = false;
         TurtlePosition oldpos = positions.get(positions.size() - 1);
         positions.set(positions.size() - 1, new TurtlePosition(oldpos.x, oldpos.y, oldpos.angle, pendown));
+    }
+
+    public void setxy(double x, double y) {
+        positions.add(new TurtlePosition((float) x, (float) y, positions.get(positions.size() - 1).angle, pendown));
     }
 
     public void ts(float speed) {
