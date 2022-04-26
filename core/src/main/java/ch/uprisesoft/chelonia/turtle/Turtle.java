@@ -24,6 +24,7 @@ public class Turtle {
     private List<TurtlePosition> animatedPositions;
     private boolean visible = true;
     private boolean pendown = false;
+    private boolean animationStarted = true;
 
     public Turtle() {
         this(new TurtlePosition(0, 0, 0, true), 10);
@@ -49,12 +50,14 @@ public class Turtle {
         }
         
         // If it's first element, just copy the actual in case pendown has changed
-        if(actualPosIndex == 1) {
+        if(animationStarted) {
             animatedPositions.clear();
+            animationStarted = !animationStarted;
         }
+        
         // No animation necessary
         if (pps == 0) {
-//            animatedPositions.clear();
+            animatedPositions.clear();
             animatedPositions.addAll(positions);
             return animatedPositions;
         }
@@ -240,6 +243,7 @@ public class Turtle {
         positions.clear();
         animatedPositions.clear();
         actualPosIndex = 1;
+        animationStarted = true;
         positions.add(new TurtlePosition(0, 0, 0, pendown));
         animatedPositions.add(new TurtlePosition(0, 0, 0, pendown));
     }
