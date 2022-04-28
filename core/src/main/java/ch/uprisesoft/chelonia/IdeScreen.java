@@ -4,9 +4,12 @@ import ch.uprisesoft.chelonia.turtle.TurtleManager;
 import ch.uprisesoft.chelonia.turtle.TurtlePosition;
 import ch.uprisesoft.chelonia.turtle.VectorFactory;
 import ch.uprisesoft.yali.ast.node.Node;
+import ch.uprisesoft.yali.ast.node.NodeType;
+import ch.uprisesoft.yali.exception.NodeTypeException;
 import ch.uprisesoft.yali.runtime.interpreter.Interpreter;
 import ch.uprisesoft.yali.runtime.io.InputGenerator;
 import ch.uprisesoft.yali.runtime.io.OutputObserver;
+import ch.uprisesoft.yali.scope.VariableNotFoundException;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Input.Keys;
@@ -106,9 +109,9 @@ public class IdeScreen implements Screen, InputGenerator, OutputObserver {
 //        shapeRenderer.setColor(Color.WHITE);
 
         List<TurtlePosition> positions = turtle.getTurtle().getPositionsWithHead(delta);
-        
-        for(int i = 1; i < positions.size(); i++) {
-            if(positions.get(i-1).pendown) {
+
+        for (int i = 1; i < positions.size(); i++) {
+            if (positions.get(i - 1).pendown) {
                 Vector2 origin = new Vector2(positions.get(i - 1).x, positions.get(i - 1).y);
                 Vector2 dest = new Vector2(positions.get(i).x, positions.get(i).y);
                 shapeRenderer.setColor(positions.get(i - 1).color);
@@ -236,22 +239,45 @@ public class IdeScreen implements Screen, InputGenerator, OutputObserver {
 
                     String lastCommandString = commands.get(commands.size() - 1);
 
-                    if (lastCommandString.trim().equals("")) {
-                    } else if (!procDefinitionMode && lastCommandString.toLowerCase().startsWith("to")) {
-                        procDefinitionMode = true;
-                        procDefinition.append(lastCommandString).append("\n");
-                    } else if (procDefinitionMode && lastCommandString.toLowerCase().startsWith("end")) {
-                        procDefinition.append(lastCommandString).append("\n");
-                        Node ast = yali.read(procDefinition.toString());
-                        Node result = yali.run(ast);
-                        newContent += result.toString() + "\n";
-                        procDefinitionMode = false;
-                    } else if (procDefinitionMode && !lastCommandString.toLowerCase().startsWith("end")) {
-                        procDefinition.append(lastCommandString).append("\n");
-                    } else {
-                        Node ast = yali.read(lastCommandString);
-                        Node result = yali.run(ast);
-                        newContent += result.toString() + "\n";
+                    try {
+                        if (lastCommandString.trim().equals("")) {
+                        } else if (!procDefinitionMode && lastCommandString.toLowerCase().startsWith("to")) {
+                            procDefinitionMode = true;
+                            procDefinition.append(lastCommandString).append("\n");
+                        } else if (procDefinitionMode && lastCommandString.toLowerCase().startsWith("end")) {
+                            procDefinition.append(lastCommandString).append("\n");
+                            Node ast = yali.read(procDefinition.toString());
+                            Node result = yali.run(ast);
+                            newContent += result.toString() + "\n";
+                            procDefinitionMode = false;
+                        } else if (procDefinitionMode && !lastCommandString.toLowerCase().startsWith("end")) {
+                            procDefinition.append(lastCommandString).append("\n");
+                        } else {
+                            Node ast = yali.read(lastCommandString);
+                            Node result = yali.run(ast);
+                            newContent += result.toString() + "\n";
+                        }
+                    } catch (NodeTypeException nte) {
+                        if (nte.getExpected().contains(NodeType.PROCCALL) && nte.getReceived().equals(NodeType.SYMBOL)) {
+                            newContent += String.format("I don't know how to %s (%s)",
+                                    nte.getNode().token().get(0).getLexeme(),
+                                    nte.getReceived()) + "\n";
+                        } else if (nte.getExpected().contains(NodeType.PROCCALL)) {
+                            newContent += String.format(
+                                    "I don't know what to do with %s (%s)",
+                                    nte.getNode().toString(),
+                                    nte.getReceived()) + "\n";
+                        } else {
+                            newContent += String.format(
+                                    "%s expects %s but received %s",
+                                    nte.getNode().token().get(0).getLexeme(),
+                                    nte.getExpected(),
+                                    nte.getReceived()) + "\n";
+                        }
+                    } catch (VariableNotFoundException vnfe) {
+                        newContent += String.format(
+                                "I couldn't find %s",
+                                vnfe.getName() + "\n");
                     }
 
                     if (!procDefinitionMode) {
@@ -314,7 +340,7 @@ public class IdeScreen implements Screen, InputGenerator, OutputObserver {
             }
         }
     };
-    
+
     private void sizeRepl() {
         main.getViewport().update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         if (!replCollapsed) {
