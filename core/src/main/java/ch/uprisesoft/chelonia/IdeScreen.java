@@ -285,11 +285,13 @@ public class IdeScreen implements Screen, InputGenerator, OutputObserver {
                                     nte.getReceived()
                             ) + "\n";
                         }
+                        yali.reset();
                     } catch (VariableNotFoundException vnfe) {
                         newContent += String.format(
                                 messages.get("variable_not_found"),
                                 vnfe.getName()
                         ) + "\n";
+                        yali.reset();
                     }
 
                     if (!procDefinitionMode) {
@@ -299,10 +301,10 @@ public class IdeScreen implements Screen, InputGenerator, OutputObserver {
                     }
 
                     vtf.appendText(newContent);
+                    System.out.println(vtf.getText()+"\n----");
                     newContent = "";
                     commandArea.setCursorAtTextEnd();
                 } else if (Gdx.input.isKeyPressed(Input.Keys.F1)) {
-                    System.out.println("YEEEES");
                     replCollapsed = !replCollapsed;
                 }
             }
