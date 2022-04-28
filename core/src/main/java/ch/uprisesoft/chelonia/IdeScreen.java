@@ -267,19 +267,19 @@ public class IdeScreen implements Screen, InputGenerator, OutputObserver {
                     } catch (NodeTypeException nte) {
                         if (nte.getExpected().contains(NodeType.PROCCALL) && nte.getReceived().equals(NodeType.SYMBOL)) {
                             newContent += String.format(
-                                    "; " + messages.get("function_not_found"),
+                                    messages.get("function_not_found"),
                                     nte.getNode().token().get(0).getLexeme(),
                                     nte.getReceived()
                             ) + "\n";
                         } else if (nte.getExpected().contains(NodeType.PROCCALL)) {
                             newContent += String.format(
-                                    "; " + messages.get("redundant_argument"),
+                                    messages.get("redundant_argument"),
                                     nte.getNode().toString(),
                                     nte.getReceived()
                             ) + "\n";
                         } else {
                             newContent += String.format(
-                                    "; " + messages.get("not_expected"),
+                                    messages.get("not_expected"),
                                     nte.getNode().token().get(0).getLexeme(),
                                     nte.getExpected(),
                                     nte.getReceived()
@@ -287,7 +287,7 @@ public class IdeScreen implements Screen, InputGenerator, OutputObserver {
                         }
                     } catch (VariableNotFoundException vnfe) {
                         newContent += String.format(
-                                "; " + messages.get("variable_not_found"),
+                                messages.get("variable_not_found"),
                                 vnfe.getName()
                         ) + "\n";
                     }
