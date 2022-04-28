@@ -23,6 +23,7 @@ import ch.uprisesoft.yali.exception.NodeTypeException;
 import ch.uprisesoft.yali.runtime.interpreter.Interpreter;
 import ch.uprisesoft.yali.runtime.procedures.ProcedureProvider;
 import ch.uprisesoft.yali.scope.Scope;
+import com.badlogic.gdx.graphics.Color;
 
 /**
  *
@@ -117,17 +118,17 @@ public class TurtleManager implements ProcedureProvider {
         turtle.ht();
         return turtlepos();
     }
-    
+
     public Node pd(Scope scope, java.util.List<Node> args) {
         turtle.pd();
         return turtlepos();
     }
-    
+
     public Node pu(Scope scope, java.util.List<Node> args) {
         turtle.pu();
         return turtlepos();
     }
-    
+
     public Node ts(Scope scope, java.util.List<Node> args) {
         Node arg = args.get(0);
         if (!(arg.type().equals(NodeType.INTEGER) || arg.type().equals(NodeType.FLOAT))) {
@@ -144,40 +145,60 @@ public class TurtleManager implements ProcedureProvider {
 
         return turtlepos();
     }
-    
+
     public Node setxy(Scope scope, java.util.List<Node> args) {
         Node x = args.get(0);
         Node y = args.get(1);
-        
-        double xf = 0;
-        double yf = 0;
-        
-        if (!(x.type().equals(NodeType.INTEGER) || x.type().equals(NodeType.FLOAT))) {
-            throw new NodeTypeException(x, x.type(), NodeType.INTEGER, NodeType.FLOAT);
-        }
-        
-        if (!(y.type().equals(NodeType.INTEGER) || y.type().equals(NodeType.FLOAT))) {
-            throw new NodeTypeException(y, y.type(), NodeType.INTEGER, NodeType.FLOAT);
-        }
+
+        double xf;
+        double yf;
 
         if (x.type().equals(NodeType.FLOAT)) {
             xf = x.toFloatWord().getFloat();
-        }
-
-        if (x.type().equals(NodeType.INTEGER)) {
+            System.out.println("SET X: " + xf);
+        } else if (x.type().equals(NodeType.INTEGER)) {
             xf = x.toIntegerWord().getInteger();
+            System.out.println("SET X: " + xf);
+        } else {
+            throw new NodeTypeException(x, x.type(), NodeType.INTEGER, NodeType.FLOAT);
         }
 
         if (y.type().equals(NodeType.FLOAT)) {
             yf = y.toFloatWord().getFloat();
+            System.out.println("SET Y: " + yf);
+        } else if (y.type().equals(NodeType.INTEGER)) {
+            yf = y.toIntegerWord().getInteger();
+            System.out.println("SET Y: " + yf);
+        } else {
+            throw new NodeTypeException(y, y.type(), NodeType.INTEGER, NodeType.FLOAT);
         }
 
-        if (y.type().equals(NodeType.INTEGER)) {
-            yf = y.toIntegerWord().getInteger();
-        }
-        
         turtle.setxy(xf, yf);
-        
+
+        return turtlepos();
+    }
+
+    public Node setpc(Scope scope, java.util.List<Node> args) {
+        String color = args.get(0).toQuotedWord().getQuote().toLowerCase();
+
+        switch (color) {
+            case "red":
+                turtle.setpc(Color.RED);
+                break;
+            case "green":
+                turtle.setpc(Color.GREEN);
+                break;
+            case "blue":
+                turtle.setpc(Color.BLUE);
+                break;
+            case "yellow":
+                turtle.setpc(Color.YELLOW);
+                break;
+            case "white":
+                turtle.setpc(Color.WHITE);
+                break;
+        }
+
         return turtlepos();
     }
 
@@ -208,6 +229,7 @@ public class TurtleManager implements ProcedureProvider {
         it.env().define(new Procedure("pd", (scope, val) -> this.pd(scope, val), (scope, val) -> Node.none()));
         it.env().define(new Procedure("pu", (scope, val) -> this.pu(scope, val), (scope, val) -> Node.none()));
         it.env().define(new Procedure("setxy", (scope, val) -> this.setxy(scope, val), (scope, val) -> Node.none(), "__x__", "__y__"));
+        it.env().define(new Procedure("setpc", (scope, val) -> this.setpc(scope, val), (scope, val) -> Node.none(), "__color__"));
         it.env().define(new Procedure("ts", (scope, val) -> this.ts(scope, val), (scope, val) -> Node.none(), "__speed__"));
         it.env().define(new Procedure("turtlepos", (scope, val) -> this.turtlepos(scope, val), (scope, val) -> Node.none()));
         return it;

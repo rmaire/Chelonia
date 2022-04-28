@@ -5,6 +5,7 @@
  */
 package ch.uprisesoft.chelonia.turtle;
 
+import com.badlogic.gdx.graphics.Color;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,11 +24,12 @@ public class Turtle {
     private List<TurtlePosition> positions;
     private List<TurtlePosition> animatedPositions;
     private boolean visible = true;
-    private boolean pendown = false;
+    private boolean pendown = true;
     private boolean animationStarted = true;
+    private Color actualColor = new Color(Color.WHITE);
 
     public Turtle() {
-        this(new TurtlePosition(0, 0, 0, true), 10);
+        this(new TurtlePosition(0, 0, 0, true, new Color(Color.WHITE)), 10);
     }
 
     public Turtle(TurtlePosition init, int turtlespeed) {
@@ -65,7 +67,7 @@ public class Turtle {
         // If it's first element, just copy the actual in case pendown has changed
         if (animationStarted) {
             animatedPositions.clear();
-            animationStarted = !animationStarted;
+            animationStarted = false;
         }
 
         // Get next element if counter was increased
@@ -81,6 +83,7 @@ public class Turtle {
         float newx;
         float newy;
         float newangle = targetPos.angle;
+        Color newColor = actualPos.color;
         boolean finishedX = false;
         boolean finishedY = false;
 
@@ -131,10 +134,11 @@ public class Turtle {
         }
 
         if (finishedX && finishedY) {
+            newColor = targetPos.color;
             actualPosIndex++;
         }
 
-        TurtlePosition newPos = new TurtlePosition(newx, newy, newangle, positions.get(actualPosIndex - 1).pendown);
+        TurtlePosition newPos = new TurtlePosition(newx, newy, newangle, positions.get(actualPosIndex - 1).pendown, newColor);
         animatedPositions.set(animatedPositions.size() - 1, newPos);
 
         return animatedPositions;
@@ -191,7 +195,7 @@ public class Turtle {
         float oldy = oldpos.y;
         float newy = oldy + (float) (steps * rise(angle));
         float newx = oldx + (float) (steps * run(angle));
-        positions.add(new TurtlePosition(newx, newy, angle, pendown));
+        positions.add(new TurtlePosition(newx, newy, angle, pendown, actualColor));
     }
 
     public void bk(int steps) {
@@ -201,17 +205,17 @@ public class Turtle {
         float oldy = oldpos.y;
         float newy = oldy - (float) (steps * rise(angle));
         float newx = oldx - (float) (steps * run(angle));
-        positions.add(new TurtlePosition(newx, newy, angle, pendown));
+        positions.add(new TurtlePosition(newx, newy, angle, pendown, actualColor));
     }
 
     public void lt(float degrees) {
         TurtlePosition oldpos = positions.get(positions.size() - 1);
-        positions.set(positions.size() - 1, new TurtlePosition(oldpos.x, oldpos.y, oldpos.angle - degrees, oldpos.pendown));
+        positions.set(positions.size() - 1, new TurtlePosition(oldpos.x, oldpos.y, oldpos.angle - degrees, oldpos.pendown, actualColor));
     }
 
     public void rt(float degrees) {
         TurtlePosition oldpos = positions.get(positions.size() - 1);
-        positions.set(positions.size() - 1, new TurtlePosition(oldpos.x, oldpos.y, oldpos.angle + degrees, oldpos.pendown));
+        positions.set(positions.size() - 1, new TurtlePosition(oldpos.x, oldpos.y, oldpos.angle + degrees, oldpos.pendown, actualColor));
     }
 
     public void st() {
@@ -225,17 +229,38 @@ public class Turtle {
     public void pd() {
         pendown = true;
         TurtlePosition oldpos = positions.get(positions.size() - 1);
-        positions.set(positions.size() - 1, new TurtlePosition(oldpos.x, oldpos.y, oldpos.angle, pendown));
+        positions.set(positions.size() - 1, new TurtlePosition(oldpos.x, oldpos.y, oldpos.angle, pendown, actualColor));
     }
 
     public void pu() {
         pendown = false;
         TurtlePosition oldpos = positions.get(positions.size() - 1);
-        positions.set(positions.size() - 1, new TurtlePosition(oldpos.x, oldpos.y, oldpos.angle, pendown));
+        positions.set(positions.size() - 1, new TurtlePosition(oldpos.x, oldpos.y, oldpos.angle, pendown, actualColor));
     }
 
     public void setxy(double x, double y) {
-        positions.add(new TurtlePosition((float) x, (float) y, positions.get(positions.size() - 1).angle, pendown));
+        float oldpps = pps;
+        pps = 0;
+        positions.add(new TurtlePosition((float) x, (float) y, positions.get(positions.size() - 1).angle, pendown, actualColor));
+        pps = oldpps;
+    }
+    
+    // arctan(y/x)
+    private float getAngle(float x, float y) {
+        return (float)Math.toDegrees(Math.atan(y/x));
+    }
+    
+    public void setpc(float r, float g, float b) {
+        actualColor = new Color(r, g, b, 1);
+        TurtlePosition oldpos = positions.get(positions.size() - 1);
+        positions.set(positions.size() - 1, new TurtlePosition(oldpos.x, oldpos.y, oldpos.angle, pendown, actualColor));
+    }
+    
+    public void setpc(Color color) {
+        actualColor = color;
+        TurtlePosition oldpos = positions.get(positions.size() - 1);
+        positions.set(positions.size() - 1, new TurtlePosition(oldpos.x, oldpos.y, oldpos.angle, pendown, actualColor));
+        
     }
 
     public void ts(float speed) {
@@ -247,7 +272,8 @@ public class Turtle {
         animatedPositions.clear();
         actualPosIndex = 1;
         animationStarted = true;
-        positions.add(new TurtlePosition(0, 0, 0, pendown));
-        animatedPositions.add(new TurtlePosition(0, 0, 0, pendown));
+        actualColor = new Color(Color.WHITE);
+        positions.add(new TurtlePosition(0, 0, 0, pendown, actualColor));
+        animatedPositions.add(new TurtlePosition(0, 0, 0, pendown, actualColor));
     }
 }

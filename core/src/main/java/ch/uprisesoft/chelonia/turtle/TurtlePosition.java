@@ -5,6 +5,8 @@
  */
 package ch.uprisesoft.chelonia.turtle;
 
+import com.badlogic.gdx.graphics.Color;
+
 /**
  *
  * @author rma
@@ -15,11 +17,13 @@ public class TurtlePosition {
     public final float y;
     public final float angle;
     public final boolean pendown;
+    public final Color color;
 
-    public TurtlePosition(float x, float y, float angle, boolean pendown) {
+    public TurtlePosition(float x, float y, float angle, boolean pendown, Color color) {
         this.x = x;
         this.y = y;
         this.angle = angle;
         this.pendown = pendown;
+        this.color = color;
     }
 }

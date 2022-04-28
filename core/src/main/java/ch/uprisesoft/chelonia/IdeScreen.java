@@ -103,7 +103,7 @@ public class IdeScreen implements Screen, InputGenerator, OutputObserver {
 
         shapeRenderer.setProjectionMatrix(camera.combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
-        shapeRenderer.setColor(Color.WHITE);
+//        shapeRenderer.setColor(Color.WHITE);
 
         List<TurtlePosition> positions = turtle.getTurtle().getPositionsWithHead(delta);
         
@@ -111,6 +111,7 @@ public class IdeScreen implements Screen, InputGenerator, OutputObserver {
             if(positions.get(i-1).pendown) {
                 Vector2 origin = new Vector2(positions.get(i - 1).x, positions.get(i - 1).y);
                 Vector2 dest = new Vector2(positions.get(i).x, positions.get(i).y);
+                shapeRenderer.setColor(positions.get(i - 1).color);
                 shapeRenderer.line(origin, dest);
             }
         }
