@@ -16,6 +16,7 @@ import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -28,6 +29,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.utils.I18NBundle;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.kotcrab.vis.ui.widget.HighlightTextArea;
 import com.kotcrab.vis.ui.widget.VisTable;
@@ -35,12 +37,17 @@ import com.kotcrab.vis.ui.widget.VisTextButton;
 import com.kotcrab.vis.ui.widget.VisTextField;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 /**
  * First screen of the application. Displayed after the application is created.
  */
 public class IdeScreen implements Screen, InputGenerator, OutputObserver {
+
+    FileHandle baseFileHandle = Gdx.files.internal("i18n/Translation");
+    Locale locale = new Locale("de", "CH");
+    I18NBundle messages = I18NBundle.createBundle(baseFileHandle, locale);
 
 //    private final Chelonia parent;
     private Stage main;
@@ -259,25 +266,30 @@ public class IdeScreen implements Screen, InputGenerator, OutputObserver {
                         }
                     } catch (NodeTypeException nte) {
                         if (nte.getExpected().contains(NodeType.PROCCALL) && nte.getReceived().equals(NodeType.SYMBOL)) {
-                            newContent += String.format("I don't know how to %s (%s)",
+                            newContent += String.format(
+                                    "; " + messages.get("function_not_found"),
                                     nte.getNode().token().get(0).getLexeme(),
-                                    nte.getReceived()) + "\n";
+                                    nte.getReceived()
+                            ) + "\n";
                         } else if (nte.getExpected().contains(NodeType.PROCCALL)) {
                             newContent += String.format(
-                                    "I don't know what to do with %s (%s)",
+                                    "; " + messages.get("redundant_argument"),
                                     nte.getNode().toString(),
-                                    nte.getReceived()) + "\n";
+                                    nte.getReceived()
+                            ) + "\n";
                         } else {
                             newContent += String.format(
-                                    "%s expects %s but received %s",
+                                    "; " + messages.get("not_expected"),
                                     nte.getNode().token().get(0).getLexeme(),
                                     nte.getExpected(),
-                                    nte.getReceived()) + "\n";
+                                    nte.getReceived()
+                            ) + "\n";
                         }
                     } catch (VariableNotFoundException vnfe) {
                         newContent += String.format(
-                                "I couldn't find %s",
-                                vnfe.getName() + "\n");
+                                "; " + messages.get("variable_not_found"),
+                                vnfe.getName()
+                        ) + "\n";
                     }
 
                     if (!procDefinitionMode) {
