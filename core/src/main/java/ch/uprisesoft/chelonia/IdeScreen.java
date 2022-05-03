@@ -60,10 +60,6 @@ public class IdeScreen implements Screen, InputGenerator, OutputObserver {
     private OrthographicCamera camera;
     private ShapeRenderer shapeRenderer;
 
-    private boolean procDefinitionMode = false;
-    private StringBuilder procDefinition = new StringBuilder();
-    private String newContent = "";
-
     // REPL specific members
     private static final int COMMAND_HEIGHT = 250;
     private ScrollPane commandScrollPane;
@@ -90,6 +86,7 @@ public class IdeScreen implements Screen, InputGenerator, OutputObserver {
         turtle.registerProcedures(yali);
 
         mainSkin = new Skin(Gdx.files.internal("skin/uiskin.json"));
+        mainSkin.getFont("default-font").getData().setScale(1.33f,1.33f);
         camera = new OrthographicCamera();
 
         shapeRenderer = new ShapeRenderer();
@@ -185,7 +182,6 @@ public class IdeScreen implements Screen, InputGenerator, OutputObserver {
     private void initEditor() {
         editorParentWindow = new Window("Editor", mainSkin);
 
-        mainSkin = new Skin(Gdx.files.internal("skin/uiskin.json"));
         editArea = new HighlightTextArea("");
 
         editArea.addListener(new ChangeListener() {
@@ -208,15 +204,15 @@ public class IdeScreen implements Screen, InputGenerator, OutputObserver {
         saveButton = new VisTextButton("Save", new ChangeListener() {
             @Override
             public void changed(ChangeListener.ChangeEvent ce, Actor actor) {
+                System.out.println(editArea.getText());
                 yali.run(yali.read(editArea.getText()));
-                editorCollapsed = true;
-//                save(editArea.getText());
+                toggleEditor();
             }
         });
         cancelButton = new VisTextButton("Cancel", new ChangeListener() {
             @Override
             public void changed(ChangeListener.ChangeEvent ce, Actor actor) {
-//                cancel();
+                toggleEditor();
             }
         });
         buttonTable.add(saveButton).padRight(10);
@@ -224,6 +220,7 @@ public class IdeScreen implements Screen, InputGenerator, OutputObserver {
         editorParentWindow.add(buttonTable).bottom().right();
 
         editorParentWindow.setColor(1f, 1f, 1f, 0.5f);
+        editArea.getStyle().font.getData().setScale(1.33f,1.33f);
     }
 
     private void initRepl() {
@@ -232,10 +229,12 @@ public class IdeScreen implements Screen, InputGenerator, OutputObserver {
         commandArea = new HighlightTextArea("> ");
 
         commandArea.setFocusTraversal(false);
+
         commandArea.setTextFieldListener(new VisTextField.TextFieldListener() {
             @Override
             public void keyTyped(VisTextField vtf, char c) {
                 if (Gdx.input.isKeyPressed(Input.Keys.ENTER)) {
+                    String newContent = "";
                     String areaContent = vtf.getText();
                     List<String> commandLines = Arrays.asList(areaContent.split("\n"));
                     List<String> commands = commandLines.stream()
@@ -248,17 +247,17 @@ public class IdeScreen implements Screen, InputGenerator, OutputObserver {
 
                     try {
                         if (lastCommandString.trim().equals("")) {
-                        } else if (!procDefinitionMode && lastCommandString.toLowerCase().startsWith("to")) {
-                            procDefinitionMode = true;
-                            procDefinition.append(lastCommandString).append("\n");
-                        } else if (procDefinitionMode && lastCommandString.toLowerCase().startsWith("end")) {
-                            procDefinition.append(lastCommandString).append("\n");
-                            Node ast = yali.read(procDefinition.toString());
-                            Node result = yali.run(ast);
-                            newContent += result.toString() + "\n";
-                            procDefinitionMode = false;
-                        } else if (procDefinitionMode && !lastCommandString.toLowerCase().startsWith("end")) {
-                            procDefinition.append(lastCommandString).append("\n");
+                        } else if (lastCommandString.toLowerCase().startsWith("to")) {
+                            editArea.setText(lastCommandString + "\n" + "end");
+                            toggleEditor();
+                        } else if (lastCommandString.toLowerCase().startsWith("edit")) {
+                            String[] lastCommandElements = lastCommandString.split("\\s+", 2);
+                            if (yali.env().defined(lastCommandElements[1])) {
+                                editArea.setText(yali.env().procedure(lastCommandElements[1]).getSource());
+                            } else {
+                                editArea.setText(lastCommandString.replaceFirst("edit", "to") + "\n" + "end");
+                            }
+                            toggleEditor();
                         } else {
                             Node ast = yali.read(lastCommandString);
                             Node result = yali.run(ast);
@@ -294,18 +293,13 @@ public class IdeScreen implements Screen, InputGenerator, OutputObserver {
                         yali.reset();
                     }
 
-                    if (!procDefinitionMode) {
-                        newContent += "> ";
-                    } else {
-                        newContent += ": ";
-                    }
+                    newContent += "> ";
 
                     vtf.appendText(newContent);
-                    System.out.println(vtf.getText()+"\n----");
                     newContent = "";
                     commandArea.setCursorAtTextEnd();
                 } else if (Gdx.input.isKeyPressed(Input.Keys.F1)) {
-                    replCollapsed = !replCollapsed;
+                    toggleRepl();
                 }
             }
         });
@@ -319,6 +313,7 @@ public class IdeScreen implements Screen, InputGenerator, OutputObserver {
         main.addActor(commandWindow);
         main.setKeyboardFocus(commandArea);
         commandArea.setCursorAtTextEnd();
+        commandArea.getStyle().font.getData().setScale(1.33f,1.33f);
     }
 
     private InputAdapter replAdapter = new InputAdapter() {
@@ -335,31 +330,38 @@ public class IdeScreen implements Screen, InputGenerator, OutputObserver {
 
         private void actOnKey(int keycode) {
             if (keycode == Keys.F1) {
-                if (replCollapsed) {
-                    main.addActor(commandWindow);
-                } else {
-                    commandWindow.addAction(Actions.removeActor());
-                }
-                replCollapsed = !replCollapsed;
+                toggleRepl();
             }
 
             if (keycode == Keys.F2) {
-
-                if (editorCollapsed) {
-                    main.addActor(editorParentWindow);
-                } else {
-                    editorParentWindow.addAction(Actions.removeActor());
-                }
-                editorCollapsed = !editorCollapsed;
+                toggleEditor();
             }
         }
     };
+
+    private void toggleRepl() {
+        if (replCollapsed) {
+            main.addActor(commandWindow);
+        } else {
+            commandWindow.addAction(Actions.removeActor());
+        }
+        replCollapsed = !replCollapsed;
+    }
 
     private void sizeRepl() {
         main.getViewport().update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         if (!replCollapsed) {
             commandWindow.setBounds(0, 0, Gdx.graphics.getWidth(), COMMAND_HEIGHT);
         }
+    }
+
+    private void toggleEditor() {
+        if (editorCollapsed) {
+            main.addActor(editorParentWindow);
+        } else {
+            editorParentWindow.addAction(Actions.removeActor());
+        }
+        editorCollapsed = !editorCollapsed;
     }
 
     private void sizeEditor() {
