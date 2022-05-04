@@ -86,7 +86,7 @@ public class IdeScreen implements Screen, InputGenerator, OutputObserver {
         turtle.registerProcedures(yali);
 
         mainSkin = new Skin(Gdx.files.internal("skin/uiskin.json"));
-        mainSkin.getFont("default-font").getData().setScale(1.33f,1.33f);
+        mainSkin.getFont("default-font").getData().setScale(1.33f, 1.33f);
         camera = new OrthographicCamera();
 
         shapeRenderer = new ShapeRenderer();
@@ -148,7 +148,6 @@ public class IdeScreen implements Screen, InputGenerator, OutputObserver {
     @Override
     public void inform(String output) {
         commandArea.appendText(output);
-//        inform(output);
     }
 
     @Override
@@ -204,9 +203,7 @@ public class IdeScreen implements Screen, InputGenerator, OutputObserver {
         saveButton = new VisTextButton("Save", new ChangeListener() {
             @Override
             public void changed(ChangeListener.ChangeEvent ce, Actor actor) {
-                System.out.println(editArea.getText());
-                yali.run(yali.read(editArea.getText()));
-                toggleEditor();
+                saveEditorContent();
             }
         });
         cancelButton = new VisTextButton("Cancel", new ChangeListener() {
@@ -220,7 +217,7 @@ public class IdeScreen implements Screen, InputGenerator, OutputObserver {
         editorParentWindow.add(buttonTable).bottom().right();
 
         editorParentWindow.setColor(1f, 1f, 1f, 0.5f);
-        editArea.getStyle().font.getData().setScale(1.33f,1.33f);
+        editArea.getStyle().font.getData().setScale(1.33f, 1.33f);
     }
 
     private void initRepl() {
@@ -313,10 +310,14 @@ public class IdeScreen implements Screen, InputGenerator, OutputObserver {
         main.addActor(commandWindow);
         main.setKeyboardFocus(commandArea);
         commandArea.setCursorAtTextEnd();
-        commandArea.getStyle().font.getData().setScale(1.33f,1.33f);
+        commandArea.getStyle().font.getData().setScale(1.33f, 1.33f);
     }
 
     private InputAdapter replAdapter = new InputAdapter() {
+        boolean ctrl = false;
+        boolean alt = false;
+        boolean shift = false;
+
         @Override
         public boolean keyTyped(char character) {
             return false;
@@ -324,17 +325,51 @@ public class IdeScreen implements Screen, InputGenerator, OutputObserver {
 
         @Override
         public boolean keyDown(int keycode) {
+            if (keycode == Keys.CONTROL_LEFT || keycode == Keys.CONTROL_RIGHT) {
+                ctrl = true;
+            }
+
+            if (keycode == Keys.ALT_LEFT || keycode == Keys.ALT_RIGHT) {
+                alt = true;
+            }
+
+            if (keycode == Keys.SHIFT_LEFT || keycode == Keys.SHIFT_RIGHT) {
+                shift = true;
+            }
+
             actOnKey(keycode);
             return false;
         }
 
+        @Override
+        public boolean keyUp(int keycode) {
+            if (keycode == Keys.CONTROL_LEFT || keycode == Keys.CONTROL_RIGHT) {
+                ctrl = false;
+            }
+
+            if (keycode == Keys.ALT_LEFT || keycode == Keys.ALT_RIGHT) {
+                alt = false;
+            }
+
+            if (keycode == Keys.SHIFT_LEFT || keycode == Keys.SHIFT_RIGHT) {
+                shift = false;
+            }
+
+            return false;
+        }
+
         private void actOnKey(int keycode) {
-            if (keycode == Keys.F1) {
+
+            if (ctrl && keycode == Keys.R) {
                 toggleRepl();
             }
 
-            if (keycode == Keys.F2) {
+            if (ctrl && keycode == Keys.E) {
                 toggleEditor();
+            }
+
+            if (ctrl && keycode == Keys.S && !editorCollapsed) {
+                saveEditorContent();
             }
         }
     };
@@ -362,6 +397,12 @@ public class IdeScreen implements Screen, InputGenerator, OutputObserver {
             editorParentWindow.addAction(Actions.removeActor());
         }
         editorCollapsed = !editorCollapsed;
+    }
+
+    private void saveEditorContent() {
+        System.out.println(editArea.getText());
+        yali.run(yali.read(editArea.getText()));
+        toggleEditor();
     }
 
     private void sizeEditor() {
