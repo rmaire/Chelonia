@@ -2,7 +2,6 @@ package ch.uprisesoft.chelonia;
 
 import ch.uprisesoft.chelonia.turtle.TurtleManager;
 import ch.uprisesoft.chelonia.turtle.TurtlePosition;
-import ch.uprisesoft.chelonia.turtle.VectorFactory;
 import ch.uprisesoft.yali.ast.node.Node;
 import ch.uprisesoft.yali.ast.node.NodeType;
 import ch.uprisesoft.yali.exception.NodeTypeException;
@@ -17,7 +16,6 @@ import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.files.FileHandle;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -59,14 +57,14 @@ public class IdeScreen implements Screen, InputGenerator, OutputObserver {
 
     private OrthographicCamera camera;
     private ShapeRenderer shapeRenderer;
+    private Skin mainSkin;
 
     // REPL specific members
     private static final int COMMAND_HEIGHT = 250;
     private ScrollPane commandScrollPane;
     private HighlightTextArea commandArea;
     private Window commandWindow;
-    private Skin mainSkin;
-
+    
     // Editor specific members
     private Window editorParentWindow;
     private VisTable editorTable;
@@ -79,6 +77,7 @@ public class IdeScreen implements Screen, InputGenerator, OutputObserver {
     // Yali specifics
     private final Interpreter yali;
     private final TurtleManager turtle;
+    private int ticks = 0;
 
     public IdeScreen(Interpreter interpreter, Chelonia game) {
         yali = interpreter;
@@ -86,7 +85,7 @@ public class IdeScreen implements Screen, InputGenerator, OutputObserver {
         turtle.registerProcedures(yali);
 
         mainSkin = new Skin(Gdx.files.internal("skin/uiskin.json"));
-        mainSkin.getFont("default-font").getData().setScale(1.33f, 1.33f);
+        mainSkin.getFont("default-font").getData().setScale(2f, 2f);
         camera = new OrthographicCamera();
 
         shapeRenderer = new ShapeRenderer();
@@ -152,6 +151,7 @@ public class IdeScreen implements Screen, InputGenerator, OutputObserver {
 
     @Override
     public void show() {
+        main = new Stage(new ScreenViewport());
         initRepl();
         sizeRepl();
         initEditor();
@@ -217,12 +217,10 @@ public class IdeScreen implements Screen, InputGenerator, OutputObserver {
         editorParentWindow.add(buttonTable).bottom().right();
 
         editorParentWindow.setColor(1f, 1f, 1f, 0.5f);
-        editArea.getStyle().font.getData().setScale(1.33f, 1.33f);
+        editArea.getStyle().font.getData().setScale(2f, 2f);
     }
 
     private void initRepl() {
-        main = new Stage(new ScreenViewport());
-
         commandArea = new HighlightTextArea("> ");
 
         commandArea.setFocusTraversal(false);
