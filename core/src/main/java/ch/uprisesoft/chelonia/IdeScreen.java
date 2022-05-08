@@ -1,5 +1,7 @@
 package ch.uprisesoft.chelonia;
 
+import ch.uprisesoft.chelonia.repl.Repl;
+import ch.uprisesoft.chelonia.repl.ReplTextFieldListener;
 import ch.uprisesoft.chelonia.turtle.TurtleManager;
 import ch.uprisesoft.chelonia.turtle.TurtlePosition;
 import ch.uprisesoft.yali.ast.node.Node;
@@ -41,11 +43,11 @@ import java.util.stream.Collectors;
 /**
  * First screen of the application. Displayed after the application is created.
  */
-public class IdeScreen implements Screen, InputGenerator, OutputObserver {
+public class IdeScreen implements Screen, InputGenerator, OutputObserver, Ide {
 
-    FileHandle baseFileHandle = Gdx.files.internal("i18n/Translation");
-    Locale locale = new Locale("de", "CH");
-    I18NBundle messages = I18NBundle.createBundle(baseFileHandle, locale);
+//    FileHandle baseFileHandle = Gdx.files.internal("i18n/Translation");
+//    Locale locale = new Locale("de", "CH");
+//    I18NBundle messages = I18NBundle.createBundle(baseFileHandle, locale);
 
 //    private final Chelonia parent;
     private Stage main;
@@ -60,10 +62,11 @@ public class IdeScreen implements Screen, InputGenerator, OutputObserver {
     private Skin mainSkin;
 
     // REPL specific members
-    private static final int COMMAND_HEIGHT = 250;
-    private ScrollPane commandScrollPane;
-    private HighlightTextArea commandArea;
-    private Window commandWindow;
+    private static final int REPL_HEIGHT = 250;
+//    private ScrollPane commandScrollPane;
+//    private HighlightTextArea commandArea;
+//    private Window commandWindow;
+    private Repl repl;
     
     // Editor specific members
     private Window editorParentWindow;
@@ -85,7 +88,7 @@ public class IdeScreen implements Screen, InputGenerator, OutputObserver {
         turtle.registerProcedures(yali);
 
         mainSkin = new Skin(Gdx.files.internal("skin/uiskin.json"));
-        mainSkin.getFont("default-font").getData().setScale(2f, 2f);
+//        mainSkin.getFont("default-font").getData().setScale(2f, 2f);
         camera = new OrthographicCamera();
 
         shapeRenderer = new ShapeRenderer();
@@ -146,13 +149,17 @@ public class IdeScreen implements Screen, InputGenerator, OutputObserver {
 
     @Override
     public void inform(String output) {
-        commandArea.appendText(output);
+        repl.append(output);
     }
 
     @Override
     public void show() {
         main = new Stage(new ScreenViewport());
-        initRepl();
+        repl = new Repl("Commands", mainSkin, new ReplTextFieldListener(this, yali));
+        main.addActor(repl);
+        main.setKeyboardFocus(repl);
+        repl.updateCursor();
+//        initRepl();
         sizeRepl();
         initEditor();
         sizeEditor();
@@ -161,7 +168,7 @@ public class IdeScreen implements Screen, InputGenerator, OutputObserver {
         multiplexer.addProcessor(replAdapter);
         multiplexer.addProcessor(main);
         Gdx.input.setInputProcessor(multiplexer);
-        commandArea.setCursorAtTextEnd();
+        repl.updateCursor();
     }
 
     @Override
@@ -171,7 +178,7 @@ public class IdeScreen implements Screen, InputGenerator, OutputObserver {
     @Override
     public void resume() {
         Gdx.input.setInputProcessor(multiplexer);
-        commandArea.setCursorAtTextEnd();
+        repl.updateCursor();
     }
 
     @Override
@@ -217,99 +224,99 @@ public class IdeScreen implements Screen, InputGenerator, OutputObserver {
         editorParentWindow.add(buttonTable).bottom().right();
 
         editorParentWindow.setColor(1f, 1f, 1f, 0.5f);
-        editArea.getStyle().font.getData().setScale(2f, 2f);
+//        editArea.getStyle().font.getData().setScale(2f, 2f);
     }
 
-    private void initRepl() {
-        commandArea = new HighlightTextArea("> ");
-
-        commandArea.setFocusTraversal(false);
-
-        commandArea.setTextFieldListener(new VisTextField.TextFieldListener() {
-            @Override
-            public void keyTyped(VisTextField vtf, char c) {
-                if (Gdx.input.isKeyPressed(Input.Keys.ENTER)) {
-                    String newContent = "";
-                    String areaContent = vtf.getText();
-                    List<String> commandLines = Arrays.asList(areaContent.split("\n"));
-                    List<String> commands = commandLines.stream()
-                            .filter(command -> command.startsWith("> ") || command.startsWith(": "))
-                            .map(command -> command.replace("> ", ""))
-                            .map(command -> command.replace(": ", ""))
-                            .collect(Collectors.toList());
-
-                    String lastCommandString = commands.get(commands.size() - 1);
-
-                    try {
-                        if (lastCommandString.trim().equals("")) {
-                        } else if (lastCommandString.toLowerCase().startsWith("to")) {
-                            editArea.setText(lastCommandString + "\n" + "end");
-                            toggleEditor();
-                        } else if (lastCommandString.toLowerCase().startsWith("edit")) {
-                            String[] lastCommandElements = lastCommandString.split("\\s+", 2);
-                            if (yali.env().defined(lastCommandElements[1])) {
-                                editArea.setText(yali.env().procedure(lastCommandElements[1]).getSource());
-                            } else {
-                                editArea.setText(lastCommandString.replaceFirst("edit", "to") + "\n" + "end");
-                            }
-                            toggleEditor();
-                        } else {
-                            Node ast = yali.read(lastCommandString);
-                            Node result = yali.run(ast);
-                            newContent += result.toString() + "\n";
-                        }
-                    } catch (NodeTypeException nte) {
-                        if (nte.getExpected().contains(NodeType.PROCCALL) && nte.getReceived().equals(NodeType.SYMBOL)) {
-                            newContent += String.format(
-                                    messages.get("function_not_found"),
-                                    nte.getNode().token().get(0).getLexeme(),
-                                    nte.getReceived()
-                            ) + "\n";
-                        } else if (nte.getExpected().contains(NodeType.PROCCALL)) {
-                            newContent += String.format(
-                                    messages.get("redundant_argument"),
-                                    nte.getNode().toString(),
-                                    nte.getReceived()
-                            ) + "\n";
-                        } else {
-                            newContent += String.format(
-                                    messages.get("not_expected"),
-                                    nte.getNode().token().get(0).getLexeme(),
-                                    nte.getExpected(),
-                                    nte.getReceived()
-                            ) + "\n";
-                        }
-                        yali.reset();
-                    } catch (VariableNotFoundException vnfe) {
-                        newContent += String.format(
-                                messages.get("variable_not_found"),
-                                vnfe.getName()
-                        ) + "\n";
-                        yali.reset();
-                    }
-
-                    newContent += "> ";
-
-                    vtf.appendText(newContent);
-                    newContent = "";
-                    commandArea.setCursorAtTextEnd();
-                } else if (Gdx.input.isKeyPressed(Input.Keys.F1)) {
-                    toggleRepl();
-                }
-            }
-        });
-
-        commandScrollPane = commandArea.createCompatibleScrollPane();
-
-        commandWindow = new Window("Commands", mainSkin);
-        commandWindow.add(commandScrollPane).fill().expand();
-        commandWindow.setColor(1f, 1f, 1f, 0.5f);
-
-        main.addActor(commandWindow);
-        main.setKeyboardFocus(commandArea);
-        commandArea.setCursorAtTextEnd();
-        commandArea.getStyle().font.getData().setScale(1.33f, 1.33f);
-    }
+//    private void initRepl() {
+//        commandArea = new HighlightTextArea("> ");
+//
+//        commandArea.setFocusTraversal(false);
+//
+//        commandArea.setTextFieldListener(new VisTextField.TextFieldListener() {
+//            @Override
+//            public void keyTyped(VisTextField vtf, char c) {
+//                if (Gdx.input.isKeyPressed(Input.Keys.ENTER)) {
+//                    String newContent = "";
+//                    String areaContent = vtf.getText();
+//                    List<String> commandLines = Arrays.asList(areaContent.split("\n"));
+//                    List<String> commands = commandLines.stream()
+//                            .filter(command -> command.startsWith("> ") || command.startsWith(": "))
+//                            .map(command -> command.replace("> ", ""))
+//                            .map(command -> command.replace(": ", ""))
+//                            .collect(Collectors.toList());
+//
+//                    String lastCommandString = commands.get(commands.size() - 1);
+//
+//                    try {
+//                        if (lastCommandString.trim().equals("")) {
+//                        } else if (lastCommandString.toLowerCase().startsWith("to")) {
+//                            editArea.setText(lastCommandString + "\n" + "end");
+//                            toggleEditor();
+//                        } else if (lastCommandString.toLowerCase().startsWith("edit")) {
+//                            String[] lastCommandElements = lastCommandString.split("\\s+", 2);
+//                            if (yali.env().defined(lastCommandElements[1])) {
+//                                editArea.setText(yali.env().procedure(lastCommandElements[1]).getSource());
+//                            } else {
+//                                editArea.setText(lastCommandString.replaceFirst("edit", "to") + "\n" + "end");
+//                            }
+//                            toggleEditor();
+//                        } else {
+//                            Node ast = yali.read(lastCommandString);
+//                            Node result = yali.run(ast);
+//                            newContent += result.toString() + "\n";
+//                        }
+//                    } catch (NodeTypeException nte) {
+//                        if (nte.getExpected().contains(NodeType.PROCCALL) && nte.getReceived().equals(NodeType.SYMBOL)) {
+//                            newContent += String.format(
+//                                    messages.get("function_not_found"),
+//                                    nte.getNode().token().get(0).getLexeme(),
+//                                    nte.getReceived()
+//                            ) + "\n";
+//                        } else if (nte.getExpected().contains(NodeType.PROCCALL)) {
+//                            newContent += String.format(
+//                                    messages.get("redundant_argument"),
+//                                    nte.getNode().toString(),
+//                                    nte.getReceived()
+//                            ) + "\n";
+//                        } else {
+//                            newContent += String.format(
+//                                    messages.get("not_expected"),
+//                                    nte.getNode().token().get(0).getLexeme(),
+//                                    nte.getExpected(),
+//                                    nte.getReceived()
+//                            ) + "\n";
+//                        }
+//                        yali.reset();
+//                    } catch (VariableNotFoundException vnfe) {
+//                        newContent += String.format(
+//                                messages.get("variable_not_found"),
+//                                vnfe.getName()
+//                        ) + "\n";
+//                        yali.reset();
+//                    }
+//
+//                    newContent += "> ";
+//
+//                    vtf.appendText(newContent);
+//                    newContent = "";
+//                    commandArea.setCursorAtTextEnd();
+//                } else if (Gdx.input.isKeyPressed(Input.Keys.F1)) {
+//                    toggleRepl();
+//                }
+//            }
+//        });
+//
+//        commandScrollPane = commandArea.createCompatibleScrollPane();
+//
+//        commandWindow = new Window("Commands", mainSkin);
+//        commandWindow.add(commandScrollPane).fill().expand();
+//        commandWindow.setColor(1f, 1f, 1f, 0.5f);
+//
+//        main.addActor(commandWindow);
+//        main.setKeyboardFocus(commandArea);
+//        commandArea.setCursorAtTextEnd();
+//        commandArea.getStyle().font.getData().setScale(1.33f, 1.33f);
+//    }
 
     private InputAdapter replAdapter = new InputAdapter() {
         boolean ctrl = false;
@@ -372,11 +379,12 @@ public class IdeScreen implements Screen, InputGenerator, OutputObserver {
         }
     };
 
-    private void toggleRepl() {
+    @Override
+    public void toggleRepl() {
         if (replCollapsed) {
-            main.addActor(commandWindow);
+            main.addActor(repl);
         } else {
-            commandWindow.addAction(Actions.removeActor());
+            repl.addAction(Actions.removeActor());
         }
         replCollapsed = !replCollapsed;
     }
@@ -384,17 +392,24 @@ public class IdeScreen implements Screen, InputGenerator, OutputObserver {
     private void sizeRepl() {
         main.getViewport().update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         if (!replCollapsed) {
-            commandWindow.setBounds(0, 0, Gdx.graphics.getWidth(), COMMAND_HEIGHT);
+            repl.setBounds(0, 0, Gdx.graphics.getWidth(), REPL_HEIGHT);
         }
     }
 
-    private void toggleEditor() {
+    @Override
+    public void toggleEditor() {
         if (editorCollapsed) {
             main.addActor(editorParentWindow);
         } else {
             editorParentWindow.addAction(Actions.removeActor());
         }
         editorCollapsed = !editorCollapsed;
+    }
+    
+        @Override
+    public void toggleEditor(String content) {
+        editArea.setText(content);
+        toggleEditor();
     }
 
     private void saveEditorContent() {
@@ -406,13 +421,13 @@ public class IdeScreen implements Screen, InputGenerator, OutputObserver {
     private void sizeEditor() {
         main.getViewport().update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         if (!editorCollapsed && !replCollapsed) {
-            editorParentWindow.setBounds(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight() - COMMAND_HEIGHT);
+            editorParentWindow.setBounds(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight() - REPL_HEIGHT);
         } else if (!editorCollapsed && replCollapsed) {
             editorParentWindow.setBounds(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         } else if (editorCollapsed) {
             editorParentWindow.setBounds(0, 0, 0, 0);
         }
 
-        editorParentWindow.setPosition(0, COMMAND_HEIGHT);
+        editorParentWindow.setPosition(0, REPL_HEIGHT);
     }
 }

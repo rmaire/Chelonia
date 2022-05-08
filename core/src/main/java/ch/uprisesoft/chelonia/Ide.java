@@ -5,17 +5,12 @@
  */
 package ch.uprisesoft.chelonia;
 
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.Window;
-
 /**
  *
  * @author rma
  */
-public class Repl extends Window {
-    
-    public Repl(String title, Skin skin) {
-        super(title, skin);
-    }
-    
+public interface Ide {
+    public void toggleEditor(String content);
+    public void toggleEditor();
+    public void toggleRepl();
 }
