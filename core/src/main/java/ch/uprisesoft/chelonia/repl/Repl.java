@@ -39,7 +39,6 @@ public class Repl extends Window {
     }
 
     private void initRepl() {
-        System.out.println("INIT REPL");
         commandArea = new HighlightTextArea("> ");
         commandArea.setFocusTraversal(false);
         commandArea.setTextFieldListener(tfl);

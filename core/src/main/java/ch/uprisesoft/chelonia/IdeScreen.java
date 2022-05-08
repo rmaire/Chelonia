@@ -322,7 +322,6 @@ public class IdeScreen implements Screen, InputGenerator, OutputObserver, Ide {
     }
 
     private void saveEditorContent() {
-        System.out.println(editArea.getText());
         yali.run(yali.read(editArea.getText()));
         toggleEditor();
     }

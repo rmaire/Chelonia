@@ -155,20 +155,16 @@ public class TurtleManager implements ProcedureProvider {
 
         if (x.type().equals(NodeType.FLOAT)) {
             xf = x.toFloatWord().getFloat();
-            System.out.println("SET X: " + xf);
         } else if (x.type().equals(NodeType.INTEGER)) {
             xf = x.toIntegerWord().getInteger();
-            System.out.println("SET X: " + xf);
         } else {
             throw new NodeTypeException(x, x.type(), NodeType.INTEGER, NodeType.FLOAT);
         }
 
         if (y.type().equals(NodeType.FLOAT)) {
             yf = y.toFloatWord().getFloat();
-            System.out.println("SET Y: " + yf);
         } else if (y.type().equals(NodeType.INTEGER)) {
             yf = y.toIntegerWord().getInteger();
-            System.out.println("SET Y: " + yf);
         } else {
             throw new NodeTypeException(y, y.type(), NodeType.INTEGER, NodeType.FLOAT);
         }

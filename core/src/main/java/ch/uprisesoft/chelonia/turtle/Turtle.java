@@ -48,7 +48,6 @@ public class Turtle {
     public List<TurtlePosition> getPositions(float delta) {
         
         if (angleChanged) {
-            System.out.println("CHANGED");
             TurtlePosition lastPos = animatedPositions.get(animatedPositions.size()-1);
             float newAngle = positions.get(positions.size()-1).angle;
             TurtlePosition posWithNewAngle = new TurtlePosition(lastPos.x, lastPos.y, newAngle, lastPos.pendown, lastPos.color);
