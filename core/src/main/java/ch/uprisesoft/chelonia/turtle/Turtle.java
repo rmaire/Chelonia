@@ -26,6 +26,7 @@ public class Turtle {
     private boolean visible = true;
     private boolean pendown = true;
     private boolean animationStarted = true;
+    private boolean angleChanged = false;
     private Color actualColor = new Color(Color.WHITE);
 
     public Turtle() {
@@ -45,6 +46,15 @@ public class Turtle {
     }
 
     public List<TurtlePosition> getPositions(float delta) {
+        
+        if (angleChanged) {
+            System.out.println("CHANGED");
+            TurtlePosition lastPos = animatedPositions.get(animatedPositions.size()-1);
+            float newAngle = positions.get(positions.size()-1).angle;
+            TurtlePosition posWithNewAngle = new TurtlePosition(lastPos.x, lastPos.y, newAngle, lastPos.pendown, lastPos.color);
+            animatedPositions.set(animatedPositions.size()-1, posWithNewAngle);
+            angleChanged = false;
+        }
 
         // Nothing more to do, just return calculated positions
         if (actualPosIndex == positions.size()) {
@@ -163,7 +173,9 @@ public class Turtle {
             oldPositions.addAll(positions);
             positions.clear();
             positions.addAll(animatedPositions);
+            
             boolean oldpen = pendown;
+
             this.pd();
 
             this.lt(90);
@@ -209,11 +221,13 @@ public class Turtle {
     }
 
     public void lt(float degrees) {
+        angleChanged = true;
         TurtlePosition oldpos = positions.get(positions.size() - 1);
         positions.set(positions.size() - 1, new TurtlePosition(oldpos.x, oldpos.y, oldpos.angle - degrees, oldpos.pendown, actualColor));
     }
 
     public void rt(float degrees) {
+        angleChanged = true;
         TurtlePosition oldpos = positions.get(positions.size() - 1);
         positions.set(positions.size() - 1, new TurtlePosition(oldpos.x, oldpos.y, oldpos.angle + degrees, oldpos.pendown, actualColor));
     }
@@ -244,23 +258,23 @@ public class Turtle {
         positions.add(new TurtlePosition((float) x, (float) y, positions.get(positions.size() - 1).angle, pendown, actualColor));
         pps = oldpps;
     }
-    
+
     // arctan(y/x)
     private float getAngle(float x, float y) {
-        return (float)Math.toDegrees(Math.atan(y/x));
+        return (float) Math.toDegrees(Math.atan(y / x));
     }
-    
+
     public void setpc(float r, float g, float b) {
         actualColor = new Color(r, g, b, 1);
         TurtlePosition oldpos = positions.get(positions.size() - 1);
         positions.set(positions.size() - 1, new TurtlePosition(oldpos.x, oldpos.y, oldpos.angle, pendown, actualColor));
     }
-    
+
     public void setpc(Color color) {
         actualColor = color;
         TurtlePosition oldpos = positions.get(positions.size() - 1);
         positions.set(positions.size() - 1, new TurtlePosition(oldpos.x, oldpos.y, oldpos.angle, pendown, actualColor));
-        
+
     }
 
     public void ts(float speed) {
