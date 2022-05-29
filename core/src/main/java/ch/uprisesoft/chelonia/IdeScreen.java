@@ -335,7 +335,6 @@ public class IdeScreen implements Screen, InputGenerator, OutputObserver, Ide {
         } else if (editorCollapsed) {
             editorParentWindow.setBounds(0, 0, 0, 0);
         }
-
         editorParentWindow.setPosition(0, REPL_HEIGHT);
     }
 }

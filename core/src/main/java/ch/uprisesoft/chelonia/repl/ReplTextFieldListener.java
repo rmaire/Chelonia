@@ -103,6 +103,8 @@ public class ReplTextFieldListener implements TextFieldListener {
 
             vtf.appendText(newContent);
             newContent = "";
+        } else if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
+            System.out.println("UP");
         }
     }
 }

@@ -5,21 +5,11 @@
  */
 package ch.uprisesoft.chelonia.repl;
 
-import ch.uprisesoft.yali.ast.node.Node;
-import ch.uprisesoft.yali.ast.node.NodeType;
-import ch.uprisesoft.yali.exception.NodeTypeException;
-import ch.uprisesoft.yali.scope.VariableNotFoundException;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.kotcrab.vis.ui.widget.HighlightTextArea;
-import com.kotcrab.vis.ui.widget.VisTextField;
 import com.kotcrab.vis.ui.widget.VisTextField.TextFieldListener;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  *
@@ -29,7 +19,6 @@ public class Repl extends Window {
 
     private ScrollPane commandScrollPane;
     private HighlightTextArea commandArea;
-    private Window commandWindow;
     private final TextFieldListener tfl;
 
     public Repl(String title, Skin skin, TextFieldListener tfl) {
