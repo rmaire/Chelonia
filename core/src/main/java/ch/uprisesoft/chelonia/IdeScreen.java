@@ -4,20 +4,14 @@ import ch.uprisesoft.chelonia.repl.Repl;
 import ch.uprisesoft.chelonia.repl.ReplTextFieldListener;
 import ch.uprisesoft.chelonia.turtle.TurtleManager;
 import ch.uprisesoft.chelonia.turtle.TurtlePosition;
-import ch.uprisesoft.yali.ast.node.Node;
-import ch.uprisesoft.yali.ast.node.NodeType;
-import ch.uprisesoft.yali.exception.NodeTypeException;
 import ch.uprisesoft.yali.runtime.interpreter.Interpreter;
 import ch.uprisesoft.yali.runtime.io.InputGenerator;
 import ch.uprisesoft.yali.runtime.io.OutputObserver;
-import ch.uprisesoft.yali.scope.VariableNotFoundException;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -29,16 +23,11 @@ import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
-import com.badlogic.gdx.utils.I18NBundle;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.kotcrab.vis.ui.widget.HighlightTextArea;
 import com.kotcrab.vis.ui.widget.VisTable;
 import com.kotcrab.vis.ui.widget.VisTextButton;
-import com.kotcrab.vis.ui.widget.VisTextField;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
-import java.util.stream.Collectors;
 
 /**
  * First screen of the application. Displayed after the application is created.
@@ -67,7 +56,7 @@ public class IdeScreen implements Screen, InputGenerator, OutputObserver, Ide {
 //    private HighlightTextArea commandArea;
 //    private Window commandWindow;
     private Repl repl;
-    
+
     // Editor specific members
     private Window editorParentWindow;
     private VisTable editorTable;
@@ -156,10 +145,10 @@ public class IdeScreen implements Screen, InputGenerator, OutputObserver, Ide {
     public void show() {
         main = new Stage(new ScreenViewport());
         repl = new Repl("Commands", mainSkin, new ReplTextFieldListener(this, yali));
+
         main.addActor(repl);
         main.setKeyboardFocus(repl);
         repl.updateCursor();
-//        initRepl();
         sizeRepl();
         initEditor();
         sizeEditor();
@@ -314,8 +303,8 @@ public class IdeScreen implements Screen, InputGenerator, OutputObserver, Ide {
         }
         editorCollapsed = !editorCollapsed;
     }
-    
-        @Override
+
+    @Override
     public void toggleEditor(String content) {
         editArea.setText(content);
         toggleEditor();
