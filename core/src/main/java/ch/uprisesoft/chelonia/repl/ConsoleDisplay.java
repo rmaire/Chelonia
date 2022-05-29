@@ -5,12 +5,8 @@
  */
 package ch.uprisesoft.chelonia.repl;
 
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Cell;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
@@ -21,12 +17,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.DragScrollListener;
 import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.reflect.ClassReflection;
 import com.kotcrab.vis.ui.widget.VisTable;
-import com.strongjoshua.console.ConsoleContext;
-import com.strongjoshua.console.GUIConsole;
-import com.strongjoshua.console.LogEntry;
-import com.strongjoshua.console.LogLevel;
 
 /**
  *
@@ -41,7 +32,6 @@ public class ConsoleDisplay {
     private Array<Label> labels;
     private String fontName;
     private boolean selected = true;
-    private ConsoleContext context;
     private Cell<TextButton> submitCell;
     private ScrollPane scroll;
 
