@@ -2,6 +2,8 @@ package ch.uprisesoft.chelonia;
 
 import ch.uprisesoft.chelonia.repl.Repl;
 import ch.uprisesoft.chelonia.repl.ReplTextFieldListener;
+import ch.uprisesoft.chelonia.repl.console.CommandExecutor;
+import ch.uprisesoft.chelonia.repl.console.GUIConsole;
 import ch.uprisesoft.chelonia.turtle.TurtleManager;
 import ch.uprisesoft.chelonia.turtle.TurtlePosition;
 import ch.uprisesoft.yali.runtime.interpreter.Interpreter;
@@ -38,7 +40,8 @@ public class IdeScreen implements Screen, InputGenerator, OutputObserver, Ide {
 //    Locale locale = new Locale("de", "CH");
 //    I18NBundle messages = I18NBundle.createBundle(baseFileHandle, locale);
 
-//    private final Chelonia parent;
+    private GUIConsole guic;
+
     private Stage main;
 
     private InputMultiplexer multiplexer;
@@ -144,12 +147,20 @@ public class IdeScreen implements Screen, InputGenerator, OutputObserver, Ide {
     @Override
     public void show() {
         main = new Stage(new ScreenViewport());
-        repl = new Repl("Commands", mainSkin, new ReplTextFieldListener(this, yali));
-
-        main.addActor(repl);
-        main.setKeyboardFocus(repl);
-        repl.updateCursor();
-        sizeRepl();
+//        repl = new Repl("Commands", mainSkin, new ReplTextFieldListener(this, yali));
+        
+        guic = new GUIConsole(mainSkin, yali);
+        guic.setVisible(true);
+        guic.setPosition(0, 0);
+        guic.setSize(Gdx.graphics.getWidth(), REPL_HEIGHT);
+        guic.setTitle("Commands");
+        guic.enableSubmitButton(true);
+        guic.getWindow().setColor(1f, 1f, 1f, 0.5f);
+        main.addActor(guic.getWindow());
+//        main.addActor(repl);
+//        main.setKeyboardFocus(repl);
+//        repl.updateCursor();
+//        sizeRepl();
         initEditor();
         sizeEditor();
 
@@ -157,7 +168,7 @@ public class IdeScreen implements Screen, InputGenerator, OutputObserver, Ide {
         multiplexer.addProcessor(replAdapter);
         multiplexer.addProcessor(main);
         Gdx.input.setInputProcessor(multiplexer);
-        repl.updateCursor();
+//        repl.updateCursor();
     }
 
     @Override
@@ -280,9 +291,9 @@ public class IdeScreen implements Screen, InputGenerator, OutputObserver, Ide {
     @Override
     public void toggleRepl() {
         if (replCollapsed) {
-            main.addActor(repl);
+            main.addActor(guic.getWindow());
         } else {
-            repl.addAction(Actions.removeActor());
+            guic.getWindow().addAction(Actions.removeActor());
         }
         replCollapsed = !replCollapsed;
     }
@@ -290,7 +301,7 @@ public class IdeScreen implements Screen, InputGenerator, OutputObserver, Ide {
     private void sizeRepl() {
         main.getViewport().update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         if (!replCollapsed) {
-            repl.setBounds(0, 0, Gdx.graphics.getWidth(), REPL_HEIGHT);
+//            repl.setBounds(0, 0, Gdx.graphics.getWidth(), REPL_HEIGHT);
         }
     }
 
