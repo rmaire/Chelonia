@@ -100,9 +100,6 @@ public class GUIConsole extends AbstractConsole {
         stage.addListener(new DisplayListener());
         stage.addActor(consoleWindow);
         stage.setKeyboardFocus(display.root);
-
-//        setSizePercent(50, 50);
-//        setPositionPercent(50, 50);
         display.setVisible();
     }
 
