@@ -59,7 +59,6 @@ public class GUIConsole extends AbstractConsole {
     private I18NBundle messages = I18NBundle.createBundle(baseFileHandle, locale);
 
     private ConsoleDisplay display;
-    private boolean hidden = true;
     private boolean usesMultiplexer;
     private InputProcessor appInput;
     private InputMultiplexer multiplexer;
@@ -168,10 +167,6 @@ public class GUIConsole extends AbstractConsole {
             return;
         }
         stage.act();
-
-        if (hidden) {
-            return;
-        }
         stage.draw();
     }
 
@@ -207,14 +202,14 @@ public class GUIConsole extends AbstractConsole {
     @Override
     public void setDisabled(boolean disabled) {
         if (disabled) {
-            display.setHidden(true);
+            display.setVisible();
         }
         this.disabled = disabled;
     }
 
     @Override
     public boolean hitsConsole(float screenX, float screenY) {
-        if (disabled || hidden) {
+        if (disabled) {
             return false;
         }
         stage.getCamera().unproject(stageCoords.set(screenX, screenY, 0));
@@ -231,12 +226,12 @@ public class GUIConsole extends AbstractConsole {
 
     @Override
     public boolean isVisible() {
-        return !hidden;
+        return true;
     }
 
     @Override
     public void setVisible(boolean visible) {
-        display.setHidden(!visible);
+        display.setVisible();
     }
 
     @Override
@@ -428,27 +423,31 @@ public class GUIConsole extends AbstractConsole {
             scroll.setScrollPercentY(1);
         }
 
-        private void setHidden(boolean h) {
-            hidden = h;
-            if (hidden) {
-                consoleWindow.setTouchable(Touchable.disabled);
-                stage.setKeyboardFocus(null);
-                stage.setScrollFocus(null);
-            } else {
-                input.setText("");
-                consoleWindow.setTouchable(Touchable.enabled);
-                if (selected) {
-                    select();
-                }
+        private void setVisible() {
+            input.setText("");
+            consoleWindow.setTouchable(Touchable.enabled);
+            if (selected) {
+                select();
             }
+
+//            hidden = h;
+//            if (hidden) {
+//                consoleWindow.setTouchable(Touchable.disabled);
+//                stage.setKeyboardFocus(null);
+//                stage.setScrollFocus(null);
+//            } else {
+//                input.setText("");
+//                consoleWindow.setTouchable(Touchable.enabled);
+//                if (selected) {
+//                    select();
+//                }
+//            }
         }
 
         void select() {
             selected = true;
-            if (!hidden) {
-                stage.setKeyboardFocus(input);
-                stage.setScrollFocus(scroll);
-            }
+            stage.setKeyboardFocus(input);
+            stage.setScrollFocus(scroll);
         }
 
         void deselect() {
@@ -522,14 +521,14 @@ public class GUIConsole extends AbstractConsole {
                 return false;
             }
 
-            if (keycode == Keys.ENTER && !hidden) {
+            if (keycode == Keys.ENTER) {
                 commandHistory.getNextCommand(); // Makes up arrow key repeat the same command after pressing enter
                 return display.submit();
-            } else if (keycode == Keys.UP && !hidden) {
+            } else if (keycode == Keys.UP) {
                 input.setText(commandHistory.getPreviousCommand());
                 input.setCursorPosition(input.getText().length());
                 return true;
-            } else if (keycode == Keys.DOWN && !hidden) {
+            } else if (keycode == Keys.DOWN) {
                 input.setText(commandHistory.getNextCommand());
                 input.setCursorPosition(input.getText().length());
                 return true;
