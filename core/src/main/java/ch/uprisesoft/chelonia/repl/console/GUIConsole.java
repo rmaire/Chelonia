@@ -70,7 +70,7 @@ public class GUIConsole extends AbstractConsole {
     private Vector3 stageCoords = new Vector3();
     private ScrollPane scroll;
 
-    private String tableBackground;
+    private String tableBackground = "default-rect-pad";
 
     public GUIConsole(Skin skin, Interpreter yali) {
 
@@ -104,15 +104,6 @@ public class GUIConsole extends AbstractConsole {
 //        setSizePercent(50, 50);
 //        setPositionPercent(50, 50);
         display.setVisible();
-    }
-
-    @Override
-    public void setMaxEntries(int numEntries) {
-        if (numEntries > 0 || numEntries == UNLIMITED_ENTRIES) {
-            log.setMaxEntries(numEntries);
-        } else {
-            throw new IllegalArgumentException("Maximum entries must be greater than 0 or use Console.UNLIMITED_ENTRIES.");
-        }
     }
 
     @Override
@@ -356,8 +347,7 @@ public class GUIConsole extends AbstractConsole {
 //                    l = new Label("", skin, fontName, LogLevel.DEFAULT.getColor());
                     l.setWrap(true);
                     labels.add(l);
-                    // TODO: Fix Listener
-//                    l.addListener(new LogListener(l, skin.getDrawable(tableBackground)));
+                    l.addListener(new LogListener(l, skin.getDrawable(tableBackground)));
                 }
                 l.setText(" " + le.toConsoleString());
                 l.setColor(le.getColor());
