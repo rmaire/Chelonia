@@ -65,7 +65,6 @@ public class GUIConsole extends AbstractConsole {
     private InputMultiplexer multiplexer;
     private Stage stage;
     private CommandHistory commandHistory;
-    private CommandCompleter commandCompleter;
     private Window consoleWindow;
     private boolean hasHover;
     private Color hoverColor, noHoverColor;
@@ -81,8 +80,6 @@ public class GUIConsole extends AbstractConsole {
         stage = new Stage();
         display = new ConsoleDisplay(skin);
         commandHistory = new CommandHistory();
-        commandCompleter = new CommandCompleter();
-        logToSystem = false;
 
         resetInputProcessing();
 
@@ -525,11 +522,6 @@ public class GUIConsole extends AbstractConsole {
                 return false;
             }
 
-            // reset command completer because input string may have changed
-            if (keycode != Keys.TAB) {
-                commandCompleter.reset();
-            }
-
             if (keycode == Keys.ENTER && !hidden) {
                 commandHistory.getNextCommand(); // Makes up arrow key repeat the same command after pressing enter
                 return display.submit();
@@ -539,17 +531,6 @@ public class GUIConsole extends AbstractConsole {
                 return true;
             } else if (keycode == Keys.DOWN && !hidden) {
                 input.setText(commandHistory.getNextCommand());
-                input.setCursorPosition(input.getText().length());
-                return true;
-            } else if (keycode == Keys.TAB && !hidden) {
-                String s = input.getText();
-                if (s.length() == 0) {
-                    return false;
-                }
-                if (commandCompleter.isNew()) {
-                    commandCompleter.set(exec, s);
-                }
-                input.setText(commandCompleter.next());
                 input.setCursorPosition(input.getText().length());
                 return true;
             }

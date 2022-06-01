@@ -53,13 +53,6 @@ public interface Console {
 	void setSize (int width, int height);
 
 	/**
-	 * Makes the console also log to the System when {@link Console#log(String)} is called.
-	 *
-	 * @param log to the system
-	 */
-	void setLoggingToSystem (Boolean log);
-
-	/**
 	 * Set size of the console as a percent of screen size
 	 *
 	 * @param wPct width of the console as a percent of screen width
@@ -128,55 +121,6 @@ public interface Console {
 	 */
 	void log (String msg);
 
-	/**
-	 * Logs a new entry to the console using {@link LogLevel#ERROR}.
-	 *
-	 * @param exception The exception to be logged
-	 */
-	void log (Throwable exception);
-
-	/**
-	 * Logs a new entry to the console using {@link LogLevel}.
-	 *
-	 * @param exception The exception to be logged
-	 * @param level     The {@link LogLevel} of the log entry.
-	 */
-	void log (Throwable exception, LogLevel level);
-
-	/**
-	 * Prints all log entries to the given file. Log entries include logs in the code and commands made from within in the console
-	 * while the program is running.<br>
-	 * <p>
-	 * <b>WARNING</b><br>
-	 * The file that is sent to this function will be overwritten!
-	 *
-	 * @param file The relative path to the file to print to. This method uses {@link Files#local(String)}.
-	 */
-	void printLogToFile (String file);
-
-	/**
-	 * Prints all log entries to the given file. Log entries include logs in the code and commands made from within in the console
-	 * while the program is running.<br>
-	 * <p>
-	 * <b>WARNING</b><br>
-	 * The file that is sent to this function will be overwritten!
-	 *
-	 * @param fh The {@link FileHandle} that links to the file to be written to. Note that <code>classpath</code> and
-	 *           <code>internal</code> FileHandles cannot be written to.
-	 */
-	void printLogToFile (FileHandle fh);
-
-	/**
-	 * Prints all commands
-	 */
-	void printCommands ();
-
-	/**
-	 * Prints ConsoleDoc for the given command.
-	 *
-	 * @param command The command to get help for.
-	 */
-	void printHelp (String command);
 
 	/**
 	 * @return If the console is disabled.
@@ -203,13 +147,6 @@ public interface Console {
 	 */
 	void setDisplayKeyID (int code);
 
-	/**
-	 * Sets this console's {@link CommandExecutor}. Its methods are the methods that are referenced within the console. Can be set
-	 * to null, but this will result in no commands being fired.
-	 *
-	 * @param commandExec The {@link CommandExecutor} to use.
-	 */
-	void setCommandExecutor (CommandExecutor commandExec);
 
 	/**
 	 * Executes the specified command via the set {@link CommandExecutor}.

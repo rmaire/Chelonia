@@ -1,8 +1,6 @@
 package ch.uprisesoft.chelonia;
 
 import ch.uprisesoft.chelonia.repl.Repl;
-import ch.uprisesoft.chelonia.repl.ReplTextFieldListener;
-import ch.uprisesoft.chelonia.repl.console.CommandExecutor;
 import ch.uprisesoft.chelonia.repl.console.GUIConsole;
 import ch.uprisesoft.chelonia.turtle.TurtleManager;
 import ch.uprisesoft.chelonia.turtle.TurtlePosition;
@@ -80,7 +78,7 @@ public class IdeScreen implements Screen, InputGenerator, OutputObserver, Ide {
         turtle.registerProcedures(yali);
 
         mainSkin = new Skin(Gdx.files.internal("skin/uiskin.json"));
-//        mainSkin.getFont("default-font").getData().setScale(2f, 2f);
+        mainSkin.getFont("default-font").getData().setScale(1.5f, 1.5f);
         camera = new OrthographicCamera();
 
         shapeRenderer = new ShapeRenderer();
