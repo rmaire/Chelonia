@@ -101,8 +101,9 @@ public class GUIConsole extends AbstractConsole {
         stage.addActor(consoleWindow);
         stage.setKeyboardFocus(display.root);
 
-        setSizePercent(50, 50);
-        setPositionPercent(50, 50);
+//        setSizePercent(50, 50);
+//        setPositionPercent(50, 50);
+        display.setVisible();
     }
 
     @Override
@@ -200,14 +201,6 @@ public class GUIConsole extends AbstractConsole {
     }
 
     @Override
-    public void setDisabled(boolean disabled) {
-        if (disabled) {
-            display.setVisible();
-        }
-        this.disabled = disabled;
-    }
-
-    @Override
     public boolean hitsConsole(float screenX, float screenY) {
         if (disabled) {
             return false;
@@ -225,56 +218,8 @@ public class GUIConsole extends AbstractConsole {
     }
 
     @Override
-    public boolean isVisible() {
-        return true;
-    }
-
-    @Override
-    public void setVisible(boolean visible) {
-        display.setVisible();
-    }
-
-    @Override
-    public void select() {
-        display.select();
-    }
-
-    @Override
-    public void deselect() {
-        display.deselect();
-    }
-
-    @Override
     public void setTitle(String title) {
         consoleWindow.getTitleLabel().setText(title);
-    }
-
-    private void refreshWindowColor() {
-        consoleWindow.setColor(hasHover ? hoverColor : noHoverColor);
-    }
-
-    @Override
-    public void setHoverAlpha(float alpha) {
-        hoverColor.a = alpha;
-        refreshWindowColor();
-    }
-
-    @Override
-    public void setNoHoverAlpha(float alpha) {
-        noHoverColor.a = alpha;
-        refreshWindowColor();
-    }
-
-    @Override
-    public void setHoverColor(Color color) {
-        hoverColor = color;
-        refreshWindowColor();
-    }
-
-    @Override
-    public void setNoHoverColor(Color color) {
-        noHoverColor = color;
-        refreshWindowColor();
     }
 
     @Override
@@ -294,8 +239,6 @@ public class GUIConsole extends AbstractConsole {
 
     @Override
     public void execCommand(String command) {
-//        System.out.println("CONSOLE: " + command);
-
         try {
             if (command.trim().equals("")) {
 //                } else if (lastCommandString.toLowerCase().startsWith("to")) {
@@ -319,27 +262,27 @@ public class GUIConsole extends AbstractConsole {
                         messages.get("function_not_found"),
                         nte.getNode().token().get(0).getLexeme(),
                         nte.getReceived()),
-                        LogLevel.ERROR);
+                        LogLevel.DEFAULT);
             } else if (nte.getExpected().contains(NodeType.PROCCALL)) {
                 log(String.format(
                         messages.get("redundant_argument"),
                         nte.getNode().toString(),
                         nte.getReceived()),
-                        LogLevel.ERROR);
+                        LogLevel.DEFAULT);
             } else {
                 yali.reset();
                 log(String.format(
                         messages.get("not_expected"),
                         nte.getNode().token().get(0).getLexeme(),
                         nte.getExpected()),
-                        LogLevel.ERROR);
+                        LogLevel.DEFAULT);
             }
         } catch (VariableNotFoundException vnfe) {
             yali.reset();
             log(String.format(
                     messages.get("variable_not_found"),
                     vnfe.getName()),
-                    LogLevel.ERROR);
+                    LogLevel.DEFAULT);
         }
     }
 
@@ -413,6 +356,7 @@ public class GUIConsole extends AbstractConsole {
 //                    l = new Label("", skin, fontName, LogLevel.DEFAULT.getColor());
                     l.setWrap(true);
                     labels.add(l);
+                    // TODO: Fix Listener
 //                    l.addListener(new LogListener(l, skin.getDrawable(tableBackground)));
                 }
                 l.setText(" " + le.toConsoleString());
@@ -429,19 +373,6 @@ public class GUIConsole extends AbstractConsole {
             if (selected) {
                 select();
             }
-
-//            hidden = h;
-//            if (hidden) {
-//                consoleWindow.setTouchable(Touchable.disabled);
-//                stage.setKeyboardFocus(null);
-//                stage.setScrollFocus(null);
-//            } else {
-//                input.setText("");
-//                consoleWindow.setTouchable(Touchable.enabled);
-//                if (selected) {
-//                    select();
-//                }
-//            }
         }
 
         void select() {
@@ -474,13 +405,6 @@ public class GUIConsole extends AbstractConsole {
 
             commandHistory.store(s);
             execCommand(s);
-//            if (exec != null) {
-//                commandHistory.store(s);
-//                execCommand(s);
-//            } else {
-//                log("No command executor has been set. "
-//                        + "Please call setCommandExecutor for this console in your code and restart.", LogLevel.ERROR);
-//            }
             input.setText("");
             return true;
         }
@@ -500,10 +424,7 @@ public class GUIConsole extends AbstractConsole {
 
         @Override
         public void keyTyped(TextField textField, char c) {
-//            if (("" + c).equalsIgnoreCase(Keys.toString(keyID))) {
-//                String s = textField.getText();
-//                textField.setText(s.substring(0, s.length() - 1));
-//            }
+
         }
     }
 
@@ -544,10 +465,6 @@ public class GUIConsole extends AbstractConsole {
             if (disabled) {
                 return false;
             }
-//            if (keycode == keyID) {
-//                display.setHidden(!hidden);
-//                return true;
-//            }
             return false;
         }
 
@@ -557,7 +474,6 @@ public class GUIConsole extends AbstractConsole {
                 return;
             }
             hasHover = true;
-            refreshWindowColor();
         }
 
         @Override
@@ -566,7 +482,6 @@ public class GUIConsole extends AbstractConsole {
                 return;
             }
             hasHover = false;
-            refreshWindowColor();
         }
     }
 

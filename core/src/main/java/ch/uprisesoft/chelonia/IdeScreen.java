@@ -148,7 +148,6 @@ public class IdeScreen implements Screen, InputGenerator, OutputObserver, Ide {
 //        repl = new Repl("Commands", mainSkin, new ReplTextFieldListener(this, yali));
         
         guic = new GUIConsole(mainSkin, yali);
-        guic.setVisible(true);
         guic.setPosition(0, 0);
         guic.setSize(Gdx.graphics.getWidth(), REPL_HEIGHT);
         guic.setTitle("Commands");
