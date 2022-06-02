@@ -26,30 +26,18 @@ import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.*;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldListener;
-import com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.DragScrollListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.I18NBundle;
-import com.badlogic.gdx.utils.SnapshotArray;
-import com.badlogic.gdx.utils.reflect.ClassReflection;
 import java.util.Locale;
 
-/**
- * A simple console that allows live logging, and live execution of methods,
- * from within an application. Please see the <a
- * href="https://github.com/StrongJoshua/libgdx-inGameConsole">GitHub
- * Repository</a> for more information.
- *
- * @author StrongJoshua
- */
 public class GUIConsole extends AbstractConsole {
 
     private final Interpreter yali;
@@ -72,11 +60,12 @@ public class GUIConsole extends AbstractConsole {
 
     private String tableBackground = "default-rect-pad";
 
-    public GUIConsole(Skin skin, Interpreter yali) {
+    public GUIConsole(Skin skin, Interpreter yali, Stage stage) {
 
         this.yali = yali;
 
-        stage = new Stage();
+        this.stage = stage;
+//        stage = new Stage();
         display = new ConsoleDisplay(skin);
         commandHistory = new CommandHistory();
 

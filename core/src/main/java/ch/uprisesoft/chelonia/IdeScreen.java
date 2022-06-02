@@ -117,7 +117,6 @@ public class IdeScreen implements Screen, InputGenerator, OutputObserver, Ide {
 
         shapeRenderer.end();
 
-//        commandScrollPane.scrollTo(0, commandArea.getHeight() - commandArea.getCursorY(), 0, commandArea.getStyle().font.getLineHeight());
         main.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
         main.draw();
     }
@@ -145,19 +144,13 @@ public class IdeScreen implements Screen, InputGenerator, OutputObserver, Ide {
     @Override
     public void show() {
         main = new Stage(new ScreenViewport());
-//        repl = new Repl("Commands", mainSkin, new ReplTextFieldListener(this, yali));
         
-        guic = new GUIConsole(mainSkin, yali);
+        guic = new GUIConsole(mainSkin, yali, main);
         guic.setPosition(0, 0);
         guic.setSize(Gdx.graphics.getWidth(), REPL_HEIGHT);
         guic.setTitle("Commands");
         guic.enableSubmitButton(true);
         guic.getWindow().setColor(1f, 1f, 1f, 0.5f);
-        main.addActor(guic.getWindow());
-//        main.addActor(repl);
-//        main.setKeyboardFocus(repl);
-//        repl.updateCursor();
-//        sizeRepl();
         initEditor();
         sizeEditor();
 
@@ -165,7 +158,6 @@ public class IdeScreen implements Screen, InputGenerator, OutputObserver, Ide {
         multiplexer.addProcessor(replAdapter);
         multiplexer.addProcessor(main);
         Gdx.input.setInputProcessor(multiplexer);
-//        repl.updateCursor();
     }
 
     @Override
@@ -175,7 +167,6 @@ public class IdeScreen implements Screen, InputGenerator, OutputObserver, Ide {
     @Override
     public void resume() {
         Gdx.input.setInputProcessor(multiplexer);
-        repl.updateCursor();
     }
 
     @Override
@@ -221,7 +212,6 @@ public class IdeScreen implements Screen, InputGenerator, OutputObserver, Ide {
         editorParentWindow.add(buttonTable).bottom().right();
 
         editorParentWindow.setColor(1f, 1f, 1f, 0.5f);
-//        editArea.getStyle().font.getData().setScale(2f, 2f);
     }
 
     private InputAdapter replAdapter = new InputAdapter() {
@@ -298,7 +288,7 @@ public class IdeScreen implements Screen, InputGenerator, OutputObserver, Ide {
     private void sizeRepl() {
         main.getViewport().update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         if (!replCollapsed) {
-//            repl.setBounds(0, 0, Gdx.graphics.getWidth(), REPL_HEIGHT);
+            guic.setSize(Gdx.graphics.getWidth(), REPL_HEIGHT);
         }
     }
 

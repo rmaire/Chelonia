@@ -30,7 +30,14 @@ public class ConsoleContext {
                 if (label == null) {
                     throw new RuntimeException("Trying to copy a null label (this should never happen).");
                 }
-                Gdx.app.getClipboard().setContents(label.getText().toString().trim());
+                
+                String labelText = label.getText().toString().trim();
+                
+                if(labelText.startsWith("> ")) {
+                    labelText = labelText.substring(2);
+                }
+                
+                Gdx.app.getClipboard().setContents(labelText);
                 ConsoleContext.this.remove();
             }
         });
