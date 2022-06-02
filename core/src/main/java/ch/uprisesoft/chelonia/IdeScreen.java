@@ -2,6 +2,7 @@ package ch.uprisesoft.chelonia;
 
 import ch.uprisesoft.chelonia.repl.Repl;
 import ch.uprisesoft.chelonia.repl.console.GUIConsole;
+import ch.uprisesoft.chelonia.repl.console.LogLevel;
 import ch.uprisesoft.chelonia.turtle.TurtleManager;
 import ch.uprisesoft.chelonia.turtle.TurtlePosition;
 import ch.uprisesoft.yali.runtime.interpreter.Interpreter;
@@ -53,10 +54,6 @@ public class IdeScreen implements Screen, InputGenerator, OutputObserver, Ide {
 
     // REPL specific members
     private static final int REPL_HEIGHT = 250;
-//    private ScrollPane commandScrollPane;
-//    private HighlightTextArea commandArea;
-//    private Window commandWindow;
-    private Repl repl;
 
     // Editor specific members
     private Window editorParentWindow;
@@ -102,7 +99,6 @@ public class IdeScreen implements Screen, InputGenerator, OutputObserver, Ide {
 
         shapeRenderer.setProjectionMatrix(camera.combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
-//        shapeRenderer.setColor(Color.WHITE);
 
         List<TurtlePosition> positions = turtle.getTurtle().getPositionsWithHead(delta);
 
@@ -138,7 +134,7 @@ public class IdeScreen implements Screen, InputGenerator, OutputObserver, Ide {
 
     @Override
     public void inform(String output) {
-        repl.append(output);
+        guic.log(output.trim(), LogLevel.DEFAULT);
     }
 
     @Override
