@@ -1,18 +1,3 @@
-/**
- * Copyright 2018 StrongJoshua (strongjoshua@hotmail.com)
- * <p>
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
- */
 package ch.uprisesoft.chelonia.repl.console;
 
 import ch.uprisesoft.yali.ast.node.Node;
@@ -38,13 +23,15 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.I18NBundle;
 import java.util.Locale;
 
-public class GUIConsole extends AbstractConsole {
+public class GUIConsole {
 
     private final Interpreter yali;
 
     private FileHandle baseFileHandle = Gdx.files.internal("i18n/Translation");
     private Locale locale = new Locale("de", "CH");
     private I18NBundle messages = I18NBundle.createBundle(baseFileHandle, locale);
+
+    private final Log log;
 
     private ConsoleDisplay display;
     private boolean usesMultiplexer;
@@ -63,6 +50,8 @@ public class GUIConsole extends AbstractConsole {
     public GUIConsole(Skin skin, Interpreter yali, Stage stage) {
 
         this.yali = yali;
+
+        this.log = new Log();
 
         this.stage = stage;
 //        stage = new Stage();
@@ -94,13 +83,11 @@ public class GUIConsole extends AbstractConsole {
         display.setVisible();
     }
 
-    @Override
     public void clear() {
         log.getLogEntries().clear();
         display.refresh();
     }
 
-    @Override
     public void setSize(int width, int height) {
         if (width <= 0 || height <= 0) {
             throw new IllegalArgumentException("Pixel size must be greater than 0.");
@@ -108,12 +95,10 @@ public class GUIConsole extends AbstractConsole {
         consoleWindow.setSize(width, height);
     }
 
-    @Override
     public void setPosition(int x, int y) {
         consoleWindow.setPosition(x, y);
     }
 
-    @Override
     public void setPositionPercent(float xPosPct, float yPosPct) {
         if (xPosPct > 100 || yPosPct > 100) {
             throw new IllegalArgumentException("Error: The console would be drawn outside of the screen.");
@@ -122,7 +107,6 @@ public class GUIConsole extends AbstractConsole {
         consoleWindow.setPosition(w * xPosPct / 100.0f, h * yPosPct / 100.0f);
     }
 
-    @Override
     public void resetInputProcessing() {
         usesMultiplexer = true;
         appInput = Gdx.input.getInputProcessor();
@@ -136,26 +120,19 @@ public class GUIConsole extends AbstractConsole {
         }
     }
 
-    @Override
     public InputProcessor getInputProcessor() {
         return stage;
     }
 
-    @Override
     public void draw() {
-        if (disabled) {
-            return;
-        }
         stage.act();
         stage.draw();
     }
 
-    @Override
     public void refresh() {
-        this.refresh(true);
+        this.refresh(false);
     }
 
-    @Override
     public void refresh(boolean retain) {
         float oldWPct = 0, oldHPct = 0, oldXPosPct = 0, oldYPosPct = 0;
         if (retain) {
@@ -167,28 +144,19 @@ public class GUIConsole extends AbstractConsole {
         int width = Gdx.graphics.getWidth(), height = Gdx.graphics.getHeight();
         stage.getViewport().setWorldSize(width, height);
         stage.getViewport().update(width, height, true);
-        if (retain) {
-            this.setSizePercent(oldWPct, oldHPct);
-            this.setPositionPercent(oldXPosPct, oldYPosPct);
-        }
     }
 
-    @Override
     public void log(String msg, LogLevel level) {
-        super.log(msg, level);
+        log.addEntry(msg, level);
         display.refresh();
     }
 
-    @Override
     public boolean hitsConsole(float screenX, float screenY) {
-        if (disabled) {
-            return false;
-        }
+
         stage.getCamera().unproject(stageCoords.set(screenX, screenY, 0));
         return stage.hit(stageCoords.x, stageCoords.y, true) != null;
     }
 
-    @Override
     public void dispose() {
         if (usesMultiplexer && appInput != null) {
             Gdx.input.setInputProcessor(appInput);
@@ -196,27 +164,22 @@ public class GUIConsole extends AbstractConsole {
         stage.dispose();
     }
 
-    @Override
     public void setTitle(String title) {
         consoleWindow.getTitleLabel().setText(title);
     }
 
-    @Override
     public void enableSubmitButton(boolean enable) {
         display.showSubmit(enable);
     }
 
-    @Override
     public void setSubmitText(String text) {
         display.setSubmitText(text);
     }
 
-    @Override
     public Window getWindow() {
         return this.consoleWindow;
     }
 
-    @Override
     public void execCommand(String command) {
         try {
             if (command.trim().equals("")) {
@@ -416,10 +379,6 @@ public class GUIConsole extends AbstractConsole {
 
         @Override
         public boolean keyDown(InputEvent event, int keycode) {
-            if (disabled) {
-                return false;
-            }
-
             if (keycode == Keys.ENTER) {
                 commandHistory.getNextCommand(); // Makes up arrow key repeat the same command after pressing enter
                 return display.submit();
@@ -440,9 +399,6 @@ public class GUIConsole extends AbstractConsole {
 
         @Override
         public boolean keyDown(InputEvent event, int keycode) {
-            if (disabled) {
-                return false;
-            }
             return false;
         }
 
