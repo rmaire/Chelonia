@@ -84,7 +84,9 @@ public class GUIConsole extends AbstractConsole {
         consoleWindow.setTouchable(Touchable.disabled);
 
         hoverColor = new Color(1, 1, 1, 1);
-        noHoverColor = new Color(1, 1, 1, 1);
+        noHoverColor = new Color(1, 1, 1, 0.5f);
+        hasHover = false;
+        refreshWindowColor();
 
         stage.addListener(new DisplayListener());
         stage.addActor(consoleWindow);
@@ -311,7 +313,7 @@ public class GUIConsole extends AbstractConsole {
             root.add(input).expandX().fillX().pad(4);
             submitCell = root.add(submit);
             root.addListener(new KeyListener(input));
-            context = new ConsoleContext(Table.class, Label.class, skin, tableBackground);
+            context = new ConsoleContext(skin);
         }
 
         void refresh() {
@@ -450,6 +452,7 @@ public class GUIConsole extends AbstractConsole {
                 return;
             }
             hasHover = true;
+            refreshWindowColor();
         }
 
         @Override
@@ -458,6 +461,7 @@ public class GUIConsole extends AbstractConsole {
                 return;
             }
             hasHover = false;
+            refreshWindowColor();
         }
     }
 
@@ -492,5 +496,9 @@ public class GUIConsole extends AbstractConsole {
             }
             self.getStyle().background = null;
         }
+    }
+
+    private void refreshWindowColor() {
+        consoleWindow.setColor(hasHover ? hoverColor : noHoverColor);
     }
 }

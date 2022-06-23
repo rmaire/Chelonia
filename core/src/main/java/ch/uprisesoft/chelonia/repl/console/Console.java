@@ -6,7 +6,6 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
-import ch.uprisesoft.chelonia.repl.console.annotation.HiddenCommand;
 
 public interface Console {
 

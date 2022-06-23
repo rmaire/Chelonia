@@ -10,7 +10,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.utils.reflect.ClassReflection;
 
 public class ConsoleContext {
 
@@ -18,7 +17,7 @@ public class ConsoleContext {
     private Label label, copy;
     private InputListener stageListener;
 
-    ConsoleContext(Class<? extends Table> tableClass, Class<? extends Label> labelClass, Skin skin, String background) {
+    ConsoleContext(Skin skin) {
         root = new Table(skin);
         copy = new Label("Copy", skin);
         copy.addListener(new ClickListener() {
