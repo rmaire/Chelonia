@@ -40,8 +40,8 @@ public class GUIConsole {
     private Stage stage;
     private CommandHistory commandHistory;
     private Window consoleWindow;
-    private boolean hasHover;
-    private Color hoverColor, noHoverColor;
+//    private boolean hasHover;
+//    private Color hoverColor, noHoverColor;
     private Vector3 stageCoords = new Vector3();
     private ScrollPane scroll;
 
@@ -72,12 +72,11 @@ public class GUIConsole {
         consoleWindow.addActor(display.root);
         consoleWindow.setTouchable(Touchable.disabled);
 
-        hoverColor = new Color(1, 1, 1, 1);
-        noHoverColor = new Color(1, 1, 1, 0.5f);
-        hasHover = false;
-        refreshWindowColor();
+//        hoverColor = new Color(1, 1, 1, 1);
+//        noHoverColor = new Color(1, 1, 1, 0.5f);
+//        hasHover = false;
+//        refreshWindowColor();
 
-        stage.addListener(new DisplayListener());
         stage.addActor(consoleWindow);
         stage.setKeyboardFocus(display.root);
         display.setVisible();
@@ -134,13 +133,13 @@ public class GUIConsole {
     }
 
     public void refresh(boolean retain) {
-        float oldWPct = 0, oldHPct = 0, oldXPosPct = 0, oldYPosPct = 0;
-        if (retain) {
-            oldWPct = consoleWindow.getWidth() / stage.getWidth() * 100;
-            oldHPct = consoleWindow.getHeight() / stage.getHeight() * 100;
-            oldXPosPct = consoleWindow.getX() / stage.getWidth() * 100;
-            oldYPosPct = consoleWindow.getY() / stage.getHeight() * 100;
-        }
+//        float oldWPct = 0, oldHPct = 0, oldXPosPct = 0, oldYPosPct = 0;
+//        if (retain) {
+//            oldWPct = consoleWindow.getWidth() / stage.getWidth() * 100;
+//            oldHPct = consoleWindow.getHeight() / stage.getHeight() * 100;
+//            oldXPosPct = consoleWindow.getX() / stage.getWidth() * 100;
+//            oldYPosPct = consoleWindow.getY() / stage.getHeight() * 100;
+//        }
         int width = Gdx.graphics.getWidth(), height = Gdx.graphics.getHeight();
         stage.getViewport().setWorldSize(width, height);
         stage.getViewport().update(width, height, true);
@@ -227,6 +226,10 @@ public class GUIConsole {
                     LogLevel.DEFAULT);
         }
     }
+
+//    private void refreshWindowColor() {
+//        consoleWindow.setColor(hasHover ? hoverColor : noHoverColor);
+//    }
 
     private class ConsoleDisplay {
 
@@ -395,32 +398,6 @@ public class GUIConsole {
         }
     }
 
-    private class DisplayListener extends InputListener {
-
-        @Override
-        public boolean keyDown(InputEvent event, int keycode) {
-            return false;
-        }
-
-        @Override
-        public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
-            if (pointer != -1) {
-                return;
-            }
-            hasHover = true;
-            refreshWindowColor();
-        }
-
-        @Override
-        public void exit(InputEvent event, float x, float y, int pointer, Actor toActor) {
-            if (pointer != -1) {
-                return;
-            }
-            hasHover = false;
-            refreshWindowColor();
-        }
-    }
-
     private class LogListener extends ClickListener {
 
         private Label self;
@@ -452,9 +429,5 @@ public class GUIConsole {
             }
             self.getStyle().background = null;
         }
-    }
-
-    private void refreshWindowColor() {
-        consoleWindow.setColor(hasHover ? hoverColor : noHoverColor);
     }
 }
