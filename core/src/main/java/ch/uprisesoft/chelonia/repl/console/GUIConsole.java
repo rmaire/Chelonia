@@ -3,7 +3,7 @@ package ch.uprisesoft.chelonia.repl.console;
 import ch.uprisesoft.yali.ast.node.Node;
 import ch.uprisesoft.yali.ast.node.NodeType;
 import ch.uprisesoft.yali.exception.NodeTypeException;
-import ch.uprisesoft.yali.runtime.interpreter.Interpreter;
+import ch.uprisesoft.yali.runtime.interpreter.UnthreadedInterpreter;
 import ch.uprisesoft.yali.scope.VariableNotFoundException;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
@@ -23,9 +23,9 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.I18NBundle;
 import java.util.Locale;
 
-public class GUIConsole {
+public final class GUIConsole {
 
-    private final Interpreter yali;
+    private final UnthreadedInterpreter yali;
 
     private FileHandle baseFileHandle = Gdx.files.internal("i18n/Translation");
     private Locale locale = new Locale("de", "CH");
@@ -33,21 +33,19 @@ public class GUIConsole {
 
     private final Log log;
 
-    private ConsoleDisplay display;
+    private final ConsoleDisplay display;
     private boolean usesMultiplexer;
     private InputProcessor appInput;
     private InputMultiplexer multiplexer;
-    private Stage stage;
-    private CommandHistory commandHistory;
-    private Window consoleWindow;
-//    private boolean hasHover;
-//    private Color hoverColor, noHoverColor;
-    private Vector3 stageCoords = new Vector3();
+    private final Stage stage;
+    private final CommandHistory commandHistory;
+    private final Window consoleWindow;
+    private final Vector3 stageCoords = new Vector3();
     private ScrollPane scroll;
 
-    private String tableBackground = "default-rect-pad";
+    private final String tableBackground = "default-rect-pad";
 
-    public GUIConsole(Skin skin, Interpreter yali, Stage stage) {
+    public GUIConsole(Skin skin, UnthreadedInterpreter yali, Stage stage) {
 
         this.yali = yali;
 
@@ -71,11 +69,7 @@ public class GUIConsole {
         consoleWindow.setKeepWithinStage(true);
         consoleWindow.addActor(display.root);
         consoleWindow.setTouchable(Touchable.disabled);
-
-//        hoverColor = new Color(1, 1, 1, 1);
-//        noHoverColor = new Color(1, 1, 1, 0.5f);
-//        hasHover = false;
-//        refreshWindowColor();
+;
 
         stage.addActor(consoleWindow);
         stage.setKeyboardFocus(display.root);
@@ -182,18 +176,19 @@ public class GUIConsole {
     public void execCommand(String command) {
         try {
             if (command.trim().equals("")) {
-//                } else if (lastCommandString.toLowerCase().startsWith("to")) {
+//                } else if (command.toLowerCase().startsWith("to")) {
 ////                    ide.toggleEditor(lastCommandString + "\n" + "end");
-//                } else if (lastCommandString.toLowerCase().startsWith("edit")) {
-//                    String[] lastCommandElements = lastCommandString.split("\\s+", 2);
+//                } else if (command.toLowerCase().startsWith("edit")) {
+//                    String[] lastCommandElements = command.split("\\s+", 2);
 //                    if (yali.env().defined(lastCommandElements[1])) {
 //                        ide.toggleEditor(yali.env().procedure(lastCommandElements[1]).getSource());
 //                    } else {
-//                        ide.toggleEditor(lastCommandString.replaceFirst("edit", "to") + "\n" + "end");
+//                        ide.toggleEditor(command.replaceFirst("edit", "to") + "\n" + "end");
 //                    }
             } else {
                 Node ast = yali.read(command);
                 Node result = yali.run(ast);
+                
                 log(command, LogLevel.COMMAND);
                 log(result.toString(), LogLevel.SUCCESS);
             }
@@ -203,27 +198,27 @@ public class GUIConsole {
                         messages.get("function_not_found"),
                         nte.getNode().token().get(0).getLexeme(),
                         nte.getReceived()),
-                        LogLevel.DEFAULT);
+                        LogLevel.ERROR);
             } else if (nte.getExpected().contains(NodeType.PROCCALL)) {
                 log(String.format(
                         messages.get("redundant_argument"),
                         nte.getNode().toString(),
                         nte.getReceived()),
-                        LogLevel.DEFAULT);
+                        LogLevel.ERROR);
             } else {
                 yali.reset();
                 log(String.format(
                         messages.get("not_expected"),
                         nte.getNode().token().get(0).getLexeme(),
                         nte.getExpected()),
-                        LogLevel.DEFAULT);
+                        LogLevel.ERROR);
             }
         } catch (VariableNotFoundException vnfe) {
             yali.reset();
             log(String.format(
                     messages.get("variable_not_found"),
                     vnfe.getName()),
-                    LogLevel.DEFAULT);
+                    LogLevel.ERROR);
         }
     }
 
@@ -238,7 +233,7 @@ public class GUIConsole {
         private TextButton submit;
         private Skin skin;
         private Array<Label> labels;
-        private String fontName;
+//        private String fontName;
         private boolean selected = true;
         private ConsoleContext context;
         private Cell<TextButton> submitCell;
@@ -248,12 +243,11 @@ public class GUIConsole {
             root = new Table(skin);
             this.skin = skin;
 
-            labels = new Array<Label>();
+            labels = new Array<>();
 
             logEntries = new Table(skin);
 
             input = new TextField("", skin);
-            input.setTextFieldListener(new FieldListener());
 
             submit = new TextButton("Los!", skin);
             submit.addListener(new ClickListener() {
@@ -296,9 +290,10 @@ public class GUIConsole {
                 if (labels.size > i) {
                     l = labels.get(i);
                 } else {
-                    l = new Label("", skin);
+//                    Skin s = skin.;
+                    l = new Label("", skin, "default-font", LogLevel.DEFAULT.getColor());
+//                    l = new Label("", skin);
                     l.setColor(LogLevel.DEFAULT.getColor());
-//                    l = new Label("", skin, fontName, LogLevel.DEFAULT.getColor());
                     l.setWrap(true);
                     labels.add(l);
                     l.addListener(new LogListener(l, skin.getDrawable(tableBackground)));
@@ -364,14 +359,6 @@ public class GUIConsole {
         }
     }
 
-    private class FieldListener implements TextFieldListener {
-
-        @Override
-        public void keyTyped(TextField textField, char c) {
-
-        }
-    }
-
     private class KeyListener extends InputListener {
 
         private TextField input;
@@ -400,18 +387,18 @@ public class GUIConsole {
 
     private class LogListener extends ClickListener {
 
-        private Label self;
-        private Drawable highlighted;
+        private final Label label;
+        private final Drawable highlighted;
 
         LogListener(Label label, Drawable highlighted) {
-            self = label;
+            this.label = label;
             this.highlighted = highlighted;
         }
 
         @Override
         public void clicked(InputEvent event, float x, float y) {
-            Vector2 pos = self.localToStageCoordinates(new Vector2(x, y));
-            display.openContext(self, pos.x, pos.y);
+            Vector2 pos = label.localToStageCoordinates(new Vector2(x, y));
+            display.openContext(label, pos.x, pos.y);
         }
 
         @Override
@@ -419,7 +406,8 @@ public class GUIConsole {
             if (pointer != -1) {
                 return;
             }
-            self.getStyle().background = highlighted;
+//            System.out.println("BOOM for " + label.toString());
+            label.getStyle().background = highlighted;
         }
 
         @Override
@@ -427,7 +415,8 @@ public class GUIConsole {
             if (pointer != -1) {
                 return;
             }
-            self.getStyle().background = null;
+//            System.out.println("POOF for " + label.toString());
+            label.getStyle().background = null;
         }
     }
 }

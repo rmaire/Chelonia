@@ -1,11 +1,10 @@
 package ch.uprisesoft.chelonia;
 
-import ch.uprisesoft.chelonia.repl.Repl;
 import ch.uprisesoft.chelonia.repl.console.GUIConsole;
 import ch.uprisesoft.chelonia.repl.console.LogLevel;
 import ch.uprisesoft.chelonia.turtle.TurtleManager;
 import ch.uprisesoft.chelonia.turtle.TurtlePosition;
-import ch.uprisesoft.yali.runtime.interpreter.Interpreter;
+import ch.uprisesoft.yali.runtime.interpreter.UnthreadedInterpreter;
 import ch.uprisesoft.yali.runtime.io.InputGenerator;
 import ch.uprisesoft.yali.runtime.io.OutputObserver;
 import com.badlogic.gdx.Gdx;
@@ -65,11 +64,11 @@ public class IdeScreen implements Screen, InputGenerator, OutputObserver, Ide {
     private HighlightTextArea editArea;
 
     // Yali specifics
-    private final Interpreter yali;
+    private final UnthreadedInterpreter yali;
     private final TurtleManager turtle;
     private int ticks = 0;
 
-    public IdeScreen(Interpreter interpreter, Chelonia game) {
+    public IdeScreen(UnthreadedInterpreter interpreter, Chelonia game) {
         yali = interpreter;
         turtle = new TurtleManager();
         turtle.registerProcedures(yali);
