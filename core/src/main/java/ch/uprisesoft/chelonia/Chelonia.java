@@ -1,8 +1,6 @@
 package ch.uprisesoft.chelonia;
 
 import ch.uprisesoft.yali.runtime.interpreter.UnthreadedInterpreter;
-import ch.uprisesoft.yali.runtime.io.InputGenerator;
-import ch.uprisesoft.yali.runtime.io.OutputObserver;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -19,10 +17,13 @@ public class Chelonia extends Game {
     public void create() {
         VisUI.load();
         yali = new UnthreadedInterpreter();
-        
-        ide = new IdeScreen(yali, this);
+//        skin = new Skin(Gdx.files.internal("holo/skin/light-hdpi/Holo-light-hdpi.json"));
+        skin = new Skin(Gdx.files.internal("skin/uiskin.json"));
+
+        skin.getFont("default-font").getData().setScale(1.5f, 1.5f);
+        ide = new IdeScreen(yali, this, skin);
         yali.loadStdLib(ide, ide);
-        skin = new Skin(Gdx.files.internal("commodore64ui/uiskin.json"));
+        
         setScreen(ide);
     }
 

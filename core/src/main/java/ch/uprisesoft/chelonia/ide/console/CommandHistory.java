@@ -11,7 +11,7 @@
  * and limitations under the License.
  */
 
-package ch.uprisesoft.chelonia.repl.console;
+package ch.uprisesoft.chelonia.ide.console;
 
 import com.badlogic.gdx.utils.Array;
 

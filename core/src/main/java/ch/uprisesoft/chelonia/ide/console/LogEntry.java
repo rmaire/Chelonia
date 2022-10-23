@@ -11,15 +11,15 @@
  * and limitations under the License.
  */
 
-package ch.uprisesoft.chelonia.repl.console;
+package ch.uprisesoft.chelonia.ide.console;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.utils.TimeUtils;
 
 public class LogEntry {
-	private String text;
-	private LogLevel level;
-	private long timeStamp;
+	private final String text;
+	private final LogLevel level;
+	private final long timeStamp;
 
 	protected LogEntry (String msg, LogLevel level) {
 		this.text = msg;

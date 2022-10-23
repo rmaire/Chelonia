@@ -1,4 +1,4 @@
-package ch.uprisesoft.chelonia.repl.console;
+package ch.uprisesoft.chelonia.ide.console;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -15,7 +15,7 @@ public class ConsoleContext {
 
     private Table root;
     private Label label, copy;
-    private InputListener stageListener;
+    private final InputListener stageListener;
 
     ConsoleContext(Skin skin) {
         root = new Table(skin);

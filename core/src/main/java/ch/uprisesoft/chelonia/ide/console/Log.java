@@ -1,17 +1,14 @@
 
-package ch.uprisesoft.chelonia.repl.console;
+package ch.uprisesoft.chelonia.ide.console;
 
-import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.Array;
 
-import java.io.IOException;
-import java.io.Writer;
 
 public class Log {
-	private Array<LogEntry> logEntries;
+	private final Array<LogEntry> logEntries;
 
 	protected Log () {
-		logEntries = new Array<LogEntry>();
+		logEntries = new Array<>();
 	}
 
 	protected void addEntry (String msg, LogLevel level) {

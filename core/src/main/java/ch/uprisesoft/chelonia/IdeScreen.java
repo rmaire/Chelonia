@@ -1,7 +1,7 @@
 package ch.uprisesoft.chelonia;
 
-import ch.uprisesoft.chelonia.repl.console.GUIConsole;
-import ch.uprisesoft.chelonia.repl.console.LogLevel;
+import ch.uprisesoft.chelonia.ide.console.Console;
+import ch.uprisesoft.chelonia.ide.console.LogLevel;
 import ch.uprisesoft.chelonia.turtle.TurtleManager;
 import ch.uprisesoft.chelonia.turtle.TurtlePosition;
 import ch.uprisesoft.yali.runtime.interpreter.UnthreadedInterpreter;
@@ -32,13 +32,13 @@ import java.util.List;
 /**
  * First screen of the application. Displayed after the application is created.
  */
-public class IdeScreen implements Screen, InputGenerator, OutputObserver, Ide {
+public class IdeScreen implements Screen, InputGenerator, OutputObserver {
 
 //    FileHandle baseFileHandle = Gdx.files.internal("i18n/Translation");
 //    Locale locale = new Locale("de", "CH");
 //    I18NBundle messages = I18NBundle.createBundle(baseFileHandle, locale);
 
-    private GUIConsole guic;
+    private Console console;
 
     private Stage main;
 
@@ -47,9 +47,9 @@ public class IdeScreen implements Screen, InputGenerator, OutputObserver, Ide {
     private boolean replCollapsed = false;
     private boolean editorCollapsed = true;
 
-    private OrthographicCamera camera;
-    private ShapeRenderer shapeRenderer;
-    private Skin mainSkin;
+    private final OrthographicCamera camera;
+    private final ShapeRenderer shapeRenderer;
+    private final Skin mainSkin;
 
     // REPL specific members
     private static final int REPL_HEIGHT = 250;
@@ -68,13 +68,12 @@ public class IdeScreen implements Screen, InputGenerator, OutputObserver, Ide {
     private final TurtleManager turtle;
     private int ticks = 0;
 
-    public IdeScreen(UnthreadedInterpreter interpreter, Chelonia game) {
+    public IdeScreen(UnthreadedInterpreter interpreter, Chelonia game, Skin skin) {
         yali = interpreter;
         turtle = new TurtleManager();
         turtle.registerProcedures(yali);
 
-        mainSkin = new Skin(Gdx.files.internal("skin/uiskin.json"));
-        mainSkin.getFont("default-font").getData().setScale(1.5f, 1.5f);
+        mainSkin = skin;
         camera = new OrthographicCamera();
 
         shapeRenderer = new ShapeRenderer();
@@ -133,19 +132,19 @@ public class IdeScreen implements Screen, InputGenerator, OutputObserver, Ide {
 
     @Override
     public void inform(String output) {
-        guic.log(output.trim(), LogLevel.DEFAULT);
+        console.log(output.trim(), LogLevel.DEFAULT);
     }
 
     @Override
     public void show() {
         main = new Stage(new ScreenViewport());
         
-        guic = new GUIConsole(mainSkin, yali, main);
-        guic.setPosition(0, 0);
-        guic.setSize(Gdx.graphics.getWidth(), REPL_HEIGHT);
-        guic.setTitle("Commands");
-        guic.enableSubmitButton(true);
-        guic.getWindow().setColor(1f, 1f, 1f, 0.5f);
+        console = new Console(mainSkin, yali, main);
+        console.setPosition(0, 0);
+        console.setSize(Gdx.graphics.getWidth(), REPL_HEIGHT);
+        console.setTitle("Commands");
+        console.getWindow().setColor(1f, 1f, 1f, 0.5f);
+        
         initEditor();
         sizeEditor();
 
@@ -270,12 +269,11 @@ public class IdeScreen implements Screen, InputGenerator, OutputObserver, Ide {
         }
     };
 
-    @Override
     public void toggleRepl() {
         if (replCollapsed) {
-            main.addActor(guic.getWindow());
+            main.addActor(console.getWindow());
         } else {
-            guic.getWindow().addAction(Actions.removeActor());
+            console.getWindow().addAction(Actions.removeActor());
         }
         replCollapsed = !replCollapsed;
     }
@@ -283,11 +281,10 @@ public class IdeScreen implements Screen, InputGenerator, OutputObserver, Ide {
     private void sizeRepl() {
         main.getViewport().update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         if (!replCollapsed) {
-            guic.setSize(Gdx.graphics.getWidth(), REPL_HEIGHT);
+            console.setSize(Gdx.graphics.getWidth(), REPL_HEIGHT);
         }
     }
 
-    @Override
     public void toggleEditor() {
         if (editorCollapsed) {
             main.addActor(editorParentWindow);
@@ -297,7 +294,6 @@ public class IdeScreen implements Screen, InputGenerator, OutputObserver, Ide {
         editorCollapsed = !editorCollapsed;
     }
 
-    @Override
     public void toggleEditor(String content) {
         editArea.setText(content);
         toggleEditor();

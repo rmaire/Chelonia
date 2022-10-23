@@ -1,4 +1,4 @@
-package ch.uprisesoft.chelonia.repl.console;
+package ch.uprisesoft.chelonia.ide.console;
 
 import ch.uprisesoft.yali.ast.node.Node;
 import ch.uprisesoft.yali.ast.node.NodeType;
@@ -10,12 +10,10 @@ import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.files.FileHandle;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.*;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
-import com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.DragScrollListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
@@ -23,13 +21,13 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.I18NBundle;
 import java.util.Locale;
 
-public final class GUIConsole {
+public final class Console {
 
     private final UnthreadedInterpreter yali;
 
-    private FileHandle baseFileHandle = Gdx.files.internal("i18n/Translation");
-    private Locale locale = new Locale("de", "CH");
-    private I18NBundle messages = I18NBundle.createBundle(baseFileHandle, locale);
+    private final FileHandle baseFileHandle = Gdx.files.internal("i18n/Translation");
+    private final Locale locale = new Locale("de", "CH");
+    private final I18NBundle messages = I18NBundle.createBundle(baseFileHandle, locale);
 
     private final Log log;
 
@@ -45,14 +43,13 @@ public final class GUIConsole {
 
     private final String tableBackground = "default-rect-pad";
 
-    public GUIConsole(Skin skin, UnthreadedInterpreter yali, Stage stage) {
+    public Console(Skin skin, UnthreadedInterpreter yali, Stage stage) {
 
         this.yali = yali;
 
         this.log = new Log();
 
         this.stage = stage;
-//        stage = new Stage();
         display = new ConsoleDisplay(skin);
         commandHistory = new CommandHistory();
 
@@ -69,10 +66,11 @@ public final class GUIConsole {
         consoleWindow.setKeepWithinStage(true);
         consoleWindow.addActor(display.root);
         consoleWindow.setTouchable(Touchable.disabled);
-;
+
 
         stage.addActor(consoleWindow);
         stage.setKeyboardFocus(display.root);
+        display.showSubmit(true);
         display.setVisible();
     }
 
@@ -159,10 +157,6 @@ public final class GUIConsole {
 
     public void setTitle(String title) {
         consoleWindow.getTitleLabel().setText(title);
-    }
-
-    public void enableSubmitButton(boolean enable) {
-        display.showSubmit(enable);
     }
 
     public void setSubmitText(String text) {
@@ -290,9 +284,7 @@ public final class GUIConsole {
                 if (labels.size > i) {
                     l = labels.get(i);
                 } else {
-//                    Skin s = skin.;
                     l = new Label("", skin, "default-font", LogLevel.DEFAULT.getColor());
-//                    l = new Label("", skin);
                     l.setColor(LogLevel.DEFAULT.getColor());
                     l.setWrap(true);
                     labels.add(l);
