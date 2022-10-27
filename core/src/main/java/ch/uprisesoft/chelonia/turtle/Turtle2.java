@@ -13,10 +13,11 @@ import java.util.List;
  *
  * @author rma
  */
-public class Turtle {
+public class Turtle2 {
 
     // Animation speed. 0 means no animation
     private float pps = 0;
+    private float actualDelta = 0;
 
     // Position of animation. Points to the actual TurtlePosition in positions
     private int actualPosIndex = 1;
@@ -25,19 +26,18 @@ public class Turtle {
     private List<TurtlePosition> animatedPositions;
     private boolean visible = true;
     private boolean pendown = true;
-    private boolean animationStarted = true;
     private boolean angleChanged = false;
     private Color actualColor = new Color(Color.WHITE);
 
-    public Turtle() {
+    public Turtle2() {
         this(new TurtlePosition(0, 0, 0, true, new Color(Color.WHITE)), 10);
     }
 
-    public Turtle(TurtlePosition init, int turtlespeed) {
+    public Turtle2(TurtlePosition init, int turtlespeed) {
         positions = new ArrayList<>();
         animatedPositions = new ArrayList<>();
-        positions.add(init);
-        animatedPositions.add(init);
+//        positions.add(init);
+//        animatedPositions.add(init);
         pps = turtlespeed * 20;
     }
 
@@ -47,7 +47,13 @@ public class Turtle {
 
     public List<TurtlePosition> getPositions(float delta) {
         
-        if (angleChanged) {
+        // Positions init
+        if(positions.isEmpty()) {
+            positions.add(0, new TurtlePosition(0, 0, 0, pendown, actualColor));
+            animatedPositions.add(0, new TurtlePosition(0, 0, 0, pendown, actualColor));
+        }
+        
+        if (angleChanged && ! animatedPositions.isEmpty()) {
             TurtlePosition lastPos = animatedPositions.get(animatedPositions.size()-1);
             float newAngle = positions.get(positions.size()-1).angle;
             TurtlePosition posWithNewAngle = new TurtlePosition(lastPos.x, lastPos.y, newAngle, lastPos.pendown, lastPos.color);
@@ -71,12 +77,6 @@ public class Turtle {
         if (!positions.get(actualPosIndex - 1).pendown) {
             animatedPositions.add(positions.get(actualPosIndex++));
             return animatedPositions;
-        }
-
-        // If it's first element, just copy the actual in case pendown has changed
-        if (animationStarted) {
-            animatedPositions.clear();
-            animationStarted = false;
         }
 
         // Get next element if counter was increased
@@ -164,7 +164,9 @@ public class Turtle {
     }
 
     public List<TurtlePosition> getPositionsWithHead(float delta) {
-        getPositions(delta);
+        List<TurtlePosition> ret = getPositions(actualDelta);
+        actualDelta = delta;
+        return ret;
 
 //        if (visible) {
 //            List<TurtlePosition> newPositions = new ArrayList<>();
@@ -197,7 +199,6 @@ public class Turtle {
 //            return animatedPositions;
 //        }
         
-        return animatedPositions;
     }
 
     public void fd(int steps) {
@@ -222,14 +223,30 @@ public class Turtle {
 
     public void lt(float degrees) {
         angleChanged = true;
+        
         TurtlePosition oldpos = positions.get(positions.size() - 1);
-        positions.set(positions.size() - 1, new TurtlePosition(oldpos.x, oldpos.y, oldpos.angle - degrees, oldpos.pendown, actualColor));
+        
+        float newAngle = oldpos.angle - degrees;
+        
+        if(newAngle <= 0) {
+            newAngle += 360;
+        }
+        
+        positions.set(positions.size() - 1, new TurtlePosition(oldpos.x, oldpos.y, newAngle, oldpos.pendown, actualColor));
     }
 
     public void rt(float degrees) {
         angleChanged = true;
+        
         TurtlePosition oldpos = positions.get(positions.size() - 1);
-        positions.set(positions.size() - 1, new TurtlePosition(oldpos.x, oldpos.y, oldpos.angle + degrees, oldpos.pendown, actualColor));
+        
+        float newAngle = oldpos.angle + degrees;
+        
+        if(newAngle >= 360) {
+            newAngle -= 360;
+        }
+        
+        positions.set(positions.size() - 1, new TurtlePosition(oldpos.x, oldpos.y, newAngle, oldpos.pendown, actualColor));
     }
 
     public void st() {
@@ -259,7 +276,6 @@ public class Turtle {
         pps = oldpps;
     }
 
-    // arctan(y/x)
     private float getAngle(float x, float y) {
         return (float) Math.toDegrees(Math.atan(y / x));
     }
@@ -285,9 +301,8 @@ public class Turtle {
         positions.clear();
         animatedPositions.clear();
         actualPosIndex = 1;
-        animationStarted = true;
         actualColor = new Color(Color.WHITE);
-        positions.add(new TurtlePosition(0, 0, 0, pendown, actualColor));
-        animatedPositions.add(new TurtlePosition(0, 0, 0, pendown, actualColor));
+//        positions.add(new TurtlePosition(0, 0, 0, pendown, actualColor));
+//        animatedPositions.add(new TurtlePosition(0, 0, 0, pendown, actualColor));
     }
 }

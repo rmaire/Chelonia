@@ -20,10 +20,11 @@ import ch.uprisesoft.yali.ast.node.Node;
 import ch.uprisesoft.yali.ast.node.NodeType;
 import ch.uprisesoft.yali.ast.node.Procedure;
 import ch.uprisesoft.yali.exception.NodeTypeException;
-import ch.uprisesoft.yali.runtime.interpreter.UnthreadedInterpreter;
+import ch.uprisesoft.yali.runtime.interpreter.Interpreter;
 import ch.uprisesoft.yali.runtime.procedures.ProcedureProvider;
 import ch.uprisesoft.yali.scope.Scope;
 import com.badlogic.gdx.graphics.Color;
+import java.util.Arrays;
 
 /**
  *
@@ -31,9 +32,9 @@ import com.badlogic.gdx.graphics.Color;
  */
 public class TurtleManager implements ProcedureProvider {
 
-    Turtle turtle = new Turtle();
+    Turtle2 turtle = new Turtle2();
 
-    public Turtle getTurtle() {
+    public Turtle2 getTurtle() {
         return turtle;
     }
 
@@ -106,7 +107,8 @@ public class TurtleManager implements ProcedureProvider {
 
     public Node cs(Scope scope, java.util.List<Node> args) {
         turtle.cs();
-        return turtlepos();
+        Node posCheat = Node.list(Arrays.asList(Node.flt(0d),Node.flt(0d),Node.flt(0d)));
+        return posCheat;
     }
 
     public Node st(Scope scope, java.util.List<Node> args) {
@@ -214,7 +216,7 @@ public class TurtleManager implements ProcedureProvider {
     }
 
     @Override
-    public UnthreadedInterpreter registerProcedures(UnthreadedInterpreter it) {
+    public Interpreter registerProcedures(Interpreter it) {
         it.env().define(new Procedure("fd", (scope, val) -> this.fd(scope, val), (scope, val) -> Node.none(), "__dist__"));
         it.env().define(new Procedure("bk", (scope, val) -> this.bk(scope, val), (scope, val) -> Node.none(), "__dist__"));
         it.env().define(new Procedure("rt", (scope, val) -> this.rt(scope, val), (scope, val) -> Node.none(), "__angle__"));
