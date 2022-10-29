@@ -36,7 +36,7 @@ public class Turtle2 {
     public Turtle2(TurtlePosition init, int turtlespeed) {
         positions = new ArrayList<>();
         animatedPositions = new ArrayList<>();
-//        positions.add(init);
+        positions.add(init);
 //        animatedPositions.add(init);
         pps = turtlespeed * 20;
     }
@@ -45,19 +45,14 @@ public class Turtle2 {
         return positions.get(positions.size() - 1);
     }
 
+    // pu fd 100 pd repeat 4 [fd 100 rt 90]
     public List<TurtlePosition> getPositions(float delta) {
-        
-        // Positions init
-        if(positions.isEmpty()) {
-            positions.add(0, new TurtlePosition(0, 0, 0, pendown, actualColor));
-            animatedPositions.add(0, new TurtlePosition(0, 0, 0, pendown, actualColor));
-        }
-        
-        if (angleChanged && ! animatedPositions.isEmpty()) {
-            TurtlePosition lastPos = animatedPositions.get(animatedPositions.size()-1);
-            float newAngle = positions.get(positions.size()-1).angle;
+
+        if (angleChanged && !animatedPositions.isEmpty()) {
+            TurtlePosition lastPos = animatedPositions.get(animatedPositions.size() - 1);
+            float newAngle = positions.get(positions.size() - 1).angle;
             TurtlePosition posWithNewAngle = new TurtlePosition(lastPos.x, lastPos.y, newAngle, lastPos.pendown, lastPos.color);
-            animatedPositions.set(animatedPositions.size()-1, posWithNewAngle);
+            animatedPositions.set(animatedPositions.size() - 1, posWithNewAngle);
             angleChanged = false;
         }
 
@@ -198,7 +193,6 @@ public class Turtle2 {
 //        } else {
 //            return animatedPositions;
 //        }
-        
     }
 
     public void fd(int steps) {
@@ -223,29 +217,29 @@ public class Turtle2 {
 
     public void lt(float degrees) {
         angleChanged = true;
-        
+
         TurtlePosition oldpos = positions.get(positions.size() - 1);
-        
+
         float newAngle = oldpos.angle - degrees;
-        
-        if(newAngle <= 0) {
+
+        if (newAngle <= 0) {
             newAngle += 360;
         }
-        
+
         positions.set(positions.size() - 1, new TurtlePosition(oldpos.x, oldpos.y, newAngle, oldpos.pendown, actualColor));
     }
 
     public void rt(float degrees) {
         angleChanged = true;
-        
+
         TurtlePosition oldpos = positions.get(positions.size() - 1);
-        
+
         float newAngle = oldpos.angle + degrees;
-        
-        if(newAngle >= 360) {
+
+        if (newAngle >= 360) {
             newAngle -= 360;
         }
-        
+
         positions.set(positions.size() - 1, new TurtlePosition(oldpos.x, oldpos.y, newAngle, oldpos.pendown, actualColor));
     }
 
@@ -259,14 +253,30 @@ public class Turtle2 {
 
     public void pd() {
         pendown = true;
+
         TurtlePosition oldpos = positions.get(positions.size() - 1);
         positions.set(positions.size() - 1, new TurtlePosition(oldpos.x, oldpos.y, oldpos.angle, pendown, actualColor));
+
+        if (!animatedPositions.isEmpty()) {
+            TurtlePosition oldapos = animatedPositions.get(animatedPositions.size() - 1);
+            animatedPositions.set(animatedPositions.size() - 1, new TurtlePosition(oldapos.x, oldapos.y, oldapos.angle, pendown, actualColor));
+        }
+
+        System.out.println("positions: " + positions.size() + ", animatedPositions: " + animatedPositions.size());
     }
 
     public void pu() {
         pendown = false;
+
         TurtlePosition oldpos = positions.get(positions.size() - 1);
         positions.set(positions.size() - 1, new TurtlePosition(oldpos.x, oldpos.y, oldpos.angle, pendown, actualColor));
+
+        if (!animatedPositions.isEmpty()) {
+            TurtlePosition oldapos = animatedPositions.get(animatedPositions.size() - 1);
+            animatedPositions.set(animatedPositions.size() - 1, new TurtlePosition(oldapos.x, oldapos.y, oldapos.angle, pendown, actualColor));
+        }
+
+        System.out.println("positions: " + positions.size() + ", animatedPositions: " + animatedPositions.size());
     }
 
     public void setxy(double x, double y) {
@@ -302,7 +312,7 @@ public class Turtle2 {
         animatedPositions.clear();
         actualPosIndex = 1;
         actualColor = new Color(Color.WHITE);
-//        positions.add(new TurtlePosition(0, 0, 0, pendown, actualColor));
-//        animatedPositions.add(new TurtlePosition(0, 0, 0, pendown, actualColor));
+        positions.add(new TurtlePosition(0, 0, 0, pendown, actualColor));
+//        animatedPositions.add(positions.get(positions.size() - 1));
     }
 }
