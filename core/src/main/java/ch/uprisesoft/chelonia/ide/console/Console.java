@@ -67,7 +67,6 @@ public final class Console {
         consoleWindow.addActor(display.root);
         consoleWindow.setTouchable(Touchable.disabled);
 
-
         stage.addActor(consoleWindow);
         stage.setKeyboardFocus(display.root);
         display.showSubmit(true);
@@ -90,13 +89,13 @@ public final class Console {
         consoleWindow.setPosition(x, y);
     }
 
-    public void setPositionPercent(float xPosPct, float yPosPct) {
-        if (xPosPct > 100 || yPosPct > 100) {
-            throw new IllegalArgumentException("Error: The console would be drawn outside of the screen.");
-        }
-        float w = Gdx.graphics.getWidth(), h = Gdx.graphics.getHeight();
-        consoleWindow.setPosition(w * xPosPct / 100.0f, h * yPosPct / 100.0f);
-    }
+//    public void setPositionPercent(float xPosPct, float yPosPct) {
+//        if (xPosPct > 100 || yPosPct > 100) {
+//            throw new IllegalArgumentException("Error: The console would be drawn outside of the screen.");
+//        }
+//        float w = Gdx.graphics.getWidth(), h = Gdx.graphics.getHeight();
+//        consoleWindow.setPosition(w * xPosPct / 100.0f, h * yPosPct / 100.0f);
+//    }
 
     public void resetInputProcessing() {
         usesMultiplexer = true;
@@ -125,13 +124,6 @@ public final class Console {
     }
 
     public void refresh(boolean retain) {
-//        float oldWPct = 0, oldHPct = 0, oldXPosPct = 0, oldYPosPct = 0;
-//        if (retain) {
-//            oldWPct = consoleWindow.getWidth() / stage.getWidth() * 100;
-//            oldHPct = consoleWindow.getHeight() / stage.getHeight() * 100;
-//            oldXPosPct = consoleWindow.getX() / stage.getWidth() * 100;
-//            oldYPosPct = consoleWindow.getY() / stage.getHeight() * 100;
-//        }
         int width = Gdx.graphics.getWidth(), height = Gdx.graphics.getHeight();
         stage.getViewport().setWorldSize(width, height);
         stage.getViewport().update(width, height, true);
@@ -140,12 +132,6 @@ public final class Console {
     public void log(String msg, LogLevel level) {
         log.addEntry(msg, level);
         display.refresh();
-    }
-
-    public boolean hitsConsole(float screenX, float screenY) {
-
-        stage.getCamera().unproject(stageCoords.set(screenX, screenY, 0));
-        return stage.hit(stageCoords.x, stageCoords.y, true) != null;
     }
 
     public void dispose() {
@@ -182,7 +168,7 @@ public final class Console {
             } else {
                 Node ast = yali.read(command);
                 Node result = yali.run(ast);
-                
+
                 log(command, LogLevel.COMMAND);
                 log(result.toString(), LogLevel.SUCCESS);
             }
@@ -216,10 +202,6 @@ public final class Console {
         }
     }
 
-//    private void refreshWindowColor() {
-//        consoleWindow.setColor(hasHover ? hoverColor : noHoverColor);
-//    }
-
     private class ConsoleDisplay {
 
         private Table root, logEntries;
@@ -227,7 +209,6 @@ public final class Console {
         private TextButton submit;
         private Skin skin;
         private Array<Label> labels;
-//        private String fontName;
         private boolean selected = true;
         private ConsoleContext context;
         private Cell<TextButton> submitCell;
@@ -241,6 +222,7 @@ public final class Console {
 
             logEntries = new Table(skin);
 
+            
             input = new TextField("", skin);
 
             submit = new TextButton("Los!", skin);
@@ -285,7 +267,8 @@ public final class Console {
                     l = labels.get(i);
                 } else {
                     l = new Label("", skin, "default-font", LogLevel.DEFAULT.getColor());
-                    l.setColor(LogLevel.DEFAULT.getColor());
+//                    l = new Label("", skin);
+//                    l.setColor(LogLevel.DEFAULT.getColor());
                     l.setWrap(true);
                     labels.add(l);
                     l.addListener(new LogListener(l, skin.getDrawable(tableBackground)));
