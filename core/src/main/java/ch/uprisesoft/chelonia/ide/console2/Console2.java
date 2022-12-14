@@ -89,7 +89,7 @@ public class Console2 {
         Label l = new Label("", skin, "default-font", new Color(Color.CYAN));
         l.setWrap(true);
         l.setText("Test");
-        l.addListener(new ReplLogListener(l, Color.BLUE));
+        l.addListener(new ReplLogListener(l, new Color(0.5f, 0.5f, 0.5f, 0.5f)));
         logEntries.add(l).expandX().fillX().top().left().row();
 
         for (int i = 0; i < 10; i++) {
