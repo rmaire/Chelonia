@@ -4,7 +4,6 @@
  */
 package ch.uprisesoft.chelonia.ide.console2;
 
-import ch.uprisesoft.chelonia.ide.console.LogLevel;
 import ch.uprisesoft.yali.runtime.interpreter.UnthreadedInterpreter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -15,6 +14,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -31,6 +31,9 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.DragScrollListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.Optional;
 
 /**
  *
@@ -46,9 +49,12 @@ public class Console2 {
     // Display stuff
     private Table root, logEntries;
     private TextField input;
+    private Skin skin;
+    private Color logBackgroundHighlight = Color.GREEN;
 
     public Console2(Skin skin, UnthreadedInterpreter yali, Stage stage) {
         this.stage = stage;
+        this.skin = skin;
 
         consoleWindow = new Window("Commands", skin);
         consoleWindow.setMovable(true);
@@ -86,23 +92,13 @@ public class Console2 {
         root.add(scroll).colspan(2).expand().fill().pad(4);
         logEntries.add(prompt).expandX().fillX().top().left().row();
 
-        Label l = new Label("", skin, "default-font", new Color(Color.CYAN));
-        l.setWrap(true);
-        l.setText("Test");
-        l.addListener(new ReplLogListener(l, new Color(0.5f, 0.5f, 0.5f, 0.5f)));
-        logEntries.add(l).expandX().fillX().top().left().row();
+//        createLabel(skin);
+        logEntries.add(createLabel("Bla", skin)).expandX().fillX().top().left().row();
 
         for (int i = 0; i < 10; i++) {
-            Label x = new Label("", skin, "default-font", new Color(Color.CYAN));
-            x.setWrap(true);
-            x.setText("Test");
-            x.addListener(new ReplLogListener(x, Color.GREEN));
-            logEntries.add(x).expandX().fillX().top().left().row();
+            logEntries.add(createLabel("Label " + i, skin)).expandX().fillX().top().left().row();
         }
 
-//        Label fill = new Label("", skin, "default-font", new Color(Color.CYAN));
-//        fill.setWrap(true);
-//        logEntries.add(fill).expand().fill();
         root.pad(4);
         root.padTop(22);
         root.setFillParent(true);
@@ -116,10 +112,34 @@ public class Console2 {
 
         stage.setKeyboardFocus(input);
 
-        root.debugAll();
+//        root.debugAll();
 
 //        stage.setKeyboardFocus(display.root);
     }
+
+    private Label createLabel(String text, Skin s) {
+        Label l = new Label(text, s, "default-font", new Color(Color.CYAN));
+        l.setWrap(true);
+        l.addListener(new ReplLogListener(l, new Color(0.5f, 0.5f, 0.5f, 0.5f)));
+        
+        return l;
+        
+    }
+    
+//    private Group createLabel(String text){
+//        Label l = new Label("", skin, "default-font", new Color(Color.WHITE));
+//        l.setWrap(true);
+//        l.setText(text);
+//        l.addListener(new ReplLogListener(l, Color.GREEN));
+//
+//        Label promptLabel = new Label("   ", skin);
+//
+//        HorizontalGroup line = new HorizontalGroup();
+//        line.addActor(promptLabel);
+//        line.addActor(l);
+//        
+//        return line;
+//    }
 
     public void setSize(int width, int height) {
         if (width <= 0 || height <= 0) {
@@ -156,6 +176,7 @@ class ReplLogListener extends ClickListener {
 
     private final Label label;
     private final Color color;
+    private Optional<LocalDateTime> lastClick = Optional.empty();
 //    private final Drawable highlighted;
 
     ReplLogListener(Label label, Color color) {
@@ -163,11 +184,17 @@ class ReplLogListener extends ClickListener {
         this.color = color;
     }
 
-//        @Override
-//        public void clicked(InputEvent event, float x, float y) {
-//            Vector2 pos = label.localToStageCoordinates(new Vector2(x, y));
-//            display.openContext(label, pos.x, pos.y);
-//        }
+    @Override
+    public void clicked(InputEvent event, float x, float y) {
+        
+        LocalDateTime newClick = LocalDateTime.now();
+        if (lastClick.isPresent() && ChronoUnit.MILLIS.between(lastClick.get(), newClick) < 400) {
+            System.out.println("DOUBLECLICK!");
+        }
+        
+        lastClick = Optional.of(LocalDateTime.now());
+    }
+
     @Override
     public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
         if (pointer != -1) {

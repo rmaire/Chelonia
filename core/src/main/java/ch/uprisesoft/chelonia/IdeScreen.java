@@ -1,7 +1,7 @@
 package ch.uprisesoft.chelonia;
 
 import ch.uprisesoft.chelonia.ide.console.Console;
-import ch.uprisesoft.chelonia.ide.console.LogLevel;
+import ch.uprisesoft.chelonia.ide.console.OutputLevel;
 import ch.uprisesoft.chelonia.ide.console2.Console2;
 import ch.uprisesoft.chelonia.turtle.TurtleManager;
 import ch.uprisesoft.chelonia.turtle.TurtlePosition;

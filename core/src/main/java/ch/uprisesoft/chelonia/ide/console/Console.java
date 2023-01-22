@@ -29,7 +29,7 @@ public final class Console {
     private final Locale locale = new Locale("de", "CH");
     private final I18NBundle messages = I18NBundle.createBundle(baseFileHandle, locale);
 
-    private final Log log;
+    private final Output log;
 
     private final ConsoleDisplay display;
     private boolean usesMultiplexer;
@@ -47,7 +47,7 @@ public final class Console {
 
         this.yali = yali;
 
-        this.log = new Log();
+        this.log = new Output();
 
         this.stage = stage;
         display = new ConsoleDisplay(skin);
@@ -129,7 +129,7 @@ public final class Console {
         stage.getViewport().update(width, height, true);
     }
 
-    public void log(String msg, LogLevel level) {
+    public void log(String msg, OutputLevel level) {
         log.addEntry(msg, level);
         display.refresh();
     }
@@ -169,8 +169,8 @@ public final class Console {
                 Node ast = yali.read(command);
                 Node result = yali.run(ast);
 
-                log(command, LogLevel.COMMAND);
-                log(result.toString(), LogLevel.SUCCESS);
+                log(command, OutputLevel.COMMAND);
+                log(result.toString(), OutputLevel.SUCCESS);
             }
         } catch (NodeTypeException nte) {
             if (nte.getExpected().contains(NodeType.PROCCALL) && nte.getReceived().equals(NodeType.SYMBOL)) {
@@ -178,27 +178,27 @@ public final class Console {
                         messages.get("function_not_found"),
                         nte.getNode().token().get(0).getLexeme(),
                         nte.getReceived()),
-                        LogLevel.ERROR);
+                        OutputLevel.ERROR);
             } else if (nte.getExpected().contains(NodeType.PROCCALL)) {
                 log(String.format(
                         messages.get("redundant_argument"),
                         nte.getNode().toString(),
                         nte.getReceived()),
-                        LogLevel.ERROR);
+                        OutputLevel.ERROR);
             } else {
                 yali.reset();
                 log(String.format(
                         messages.get("not_expected"),
                         nte.getNode().token().get(0).getLexeme(),
                         nte.getExpected()),
-                        LogLevel.ERROR);
+                        OutputLevel.ERROR);
             }
         } catch (VariableNotFoundException vnfe) {
             yali.reset();
             log(String.format(
                     messages.get("variable_not_found"),
                     vnfe.getName()),
-                    LogLevel.ERROR);
+                    OutputLevel.ERROR);
         }
     }
 
@@ -253,20 +253,20 @@ public final class Console {
         }
 
         void refresh() {
-            Array<LogEntry> entries = log.getLogEntries();
+            Array<OutputEntry> entries = log.getLogEntries();
             logEntries.clear();
 
             // expand first so labels start at the bottom
             logEntries.add().expand().fill().row();
             int size = entries.size;
             for (int i = 0; i < size; i++) {
-                LogEntry le = entries.get(i);
+                OutputEntry le = entries.get(i);
                 Label l;
                 // recycle the labels so we don't create new ones every refresh
                 if (labels.size > i) {
                     l = labels.get(i);
                 } else {
-                    l = new Label("", skin, "default-font", LogLevel.DEFAULT.getColor());
+                    l = new Label("", skin, "default-font", OutputLevel.DEFAULT.getColor());
 //                    l = new Label("", skin);
 //                    l.setColor(LogLevel.DEFAULT.getColor());
                     l.setWrap(true);
