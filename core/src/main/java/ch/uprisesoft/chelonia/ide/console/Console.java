@@ -29,7 +29,7 @@ public final class Console {
     private final Locale locale = new Locale("de", "CH");
     private final I18NBundle messages = I18NBundle.createBundle(baseFileHandle, locale);
 
-    private final Log log;
+    private final Output log;
 
     private final ConsoleDisplay display;
     private boolean usesMultiplexer;
@@ -47,7 +47,7 @@ public final class Console {
 
         this.yali = yali;
 
-        this.log = new Log();
+        this.log = new Output();
 
         this.stage = stage;
         display = new ConsoleDisplay(skin);
@@ -66,7 +66,6 @@ public final class Console {
         consoleWindow.setKeepWithinStage(true);
         consoleWindow.addActor(display.root);
         consoleWindow.setTouchable(Touchable.disabled);
-
 
         stage.addActor(consoleWindow);
         stage.setKeyboardFocus(display.root);
@@ -90,13 +89,13 @@ public final class Console {
         consoleWindow.setPosition(x, y);
     }
 
-    public void setPositionPercent(float xPosPct, float yPosPct) {
-        if (xPosPct > 100 || yPosPct > 100) {
-            throw new IllegalArgumentException("Error: The console would be drawn outside of the screen.");
-        }
-        float w = Gdx.graphics.getWidth(), h = Gdx.graphics.getHeight();
-        consoleWindow.setPosition(w * xPosPct / 100.0f, h * yPosPct / 100.0f);
-    }
+//    public void setPositionPercent(float xPosPct, float yPosPct) {
+//        if (xPosPct > 100 || yPosPct > 100) {
+//            throw new IllegalArgumentException("Error: The console would be drawn outside of the screen.");
+//        }
+//        float w = Gdx.graphics.getWidth(), h = Gdx.graphics.getHeight();
+//        consoleWindow.setPosition(w * xPosPct / 100.0f, h * yPosPct / 100.0f);
+//    }
 
     public void resetInputProcessing() {
         usesMultiplexer = true;
@@ -125,27 +124,14 @@ public final class Console {
     }
 
     public void refresh(boolean retain) {
-//        float oldWPct = 0, oldHPct = 0, oldXPosPct = 0, oldYPosPct = 0;
-//        if (retain) {
-//            oldWPct = consoleWindow.getWidth() / stage.getWidth() * 100;
-//            oldHPct = consoleWindow.getHeight() / stage.getHeight() * 100;
-//            oldXPosPct = consoleWindow.getX() / stage.getWidth() * 100;
-//            oldYPosPct = consoleWindow.getY() / stage.getHeight() * 100;
-//        }
         int width = Gdx.graphics.getWidth(), height = Gdx.graphics.getHeight();
         stage.getViewport().setWorldSize(width, height);
         stage.getViewport().update(width, height, true);
     }
 
-    public void log(String msg, LogLevel level) {
+    public void log(String msg, OutputLevel level) {
         log.addEntry(msg, level);
         display.refresh();
-    }
-
-    public boolean hitsConsole(float screenX, float screenY) {
-
-        stage.getCamera().unproject(stageCoords.set(screenX, screenY, 0));
-        return stage.hit(stageCoords.x, stageCoords.y, true) != null;
     }
 
     public void dispose() {
@@ -182,9 +168,9 @@ public final class Console {
             } else {
                 Node ast = yali.read(command);
                 Node result = yali.run(ast);
-                
-                log(command, LogLevel.COMMAND);
-                log(result.toString(), LogLevel.SUCCESS);
+
+                log(command, OutputLevel.COMMAND);
+                log(result.toString(), OutputLevel.SUCCESS);
             }
         } catch (NodeTypeException nte) {
             if (nte.getExpected().contains(NodeType.PROCCALL) && nte.getReceived().equals(NodeType.SYMBOL)) {
@@ -192,33 +178,29 @@ public final class Console {
                         messages.get("function_not_found"),
                         nte.getNode().token().get(0).getLexeme(),
                         nte.getReceived()),
-                        LogLevel.ERROR);
+                        OutputLevel.ERROR);
             } else if (nte.getExpected().contains(NodeType.PROCCALL)) {
                 log(String.format(
                         messages.get("redundant_argument"),
                         nte.getNode().toString(),
                         nte.getReceived()),
-                        LogLevel.ERROR);
+                        OutputLevel.ERROR);
             } else {
                 yali.reset();
                 log(String.format(
                         messages.get("not_expected"),
                         nte.getNode().token().get(0).getLexeme(),
                         nte.getExpected()),
-                        LogLevel.ERROR);
+                        OutputLevel.ERROR);
             }
         } catch (VariableNotFoundException vnfe) {
             yali.reset();
             log(String.format(
                     messages.get("variable_not_found"),
                     vnfe.getName()),
-                    LogLevel.ERROR);
+                    OutputLevel.ERROR);
         }
     }
-
-//    private void refreshWindowColor() {
-//        consoleWindow.setColor(hasHover ? hoverColor : noHoverColor);
-//    }
 
     private class ConsoleDisplay {
 
@@ -227,7 +209,6 @@ public final class Console {
         private TextButton submit;
         private Skin skin;
         private Array<Label> labels;
-//        private String fontName;
         private boolean selected = true;
         private ConsoleContext context;
         private Cell<TextButton> submitCell;
@@ -241,6 +222,7 @@ public final class Console {
 
             logEntries = new Table(skin);
 
+            
             input = new TextField("", skin);
 
             submit = new TextButton("Los!", skin);
@@ -271,21 +253,22 @@ public final class Console {
         }
 
         void refresh() {
-            Array<LogEntry> entries = log.getLogEntries();
+            Array<OutputEntry> entries = log.getLogEntries();
             logEntries.clear();
 
             // expand first so labels start at the bottom
             logEntries.add().expand().fill().row();
             int size = entries.size;
             for (int i = 0; i < size; i++) {
-                LogEntry le = entries.get(i);
+                OutputEntry le = entries.get(i);
                 Label l;
                 // recycle the labels so we don't create new ones every refresh
                 if (labels.size > i) {
                     l = labels.get(i);
                 } else {
-                    l = new Label("", skin, "default-font", LogLevel.DEFAULT.getColor());
-                    l.setColor(LogLevel.DEFAULT.getColor());
+                    l = new Label("", skin, "default-font", OutputLevel.DEFAULT.getColor());
+//                    l = new Label("", skin);
+//                    l.setColor(LogLevel.DEFAULT.getColor());
                     l.setWrap(true);
                     labels.add(l);
                     l.addListener(new LogListener(l, skin.getDrawable(tableBackground)));

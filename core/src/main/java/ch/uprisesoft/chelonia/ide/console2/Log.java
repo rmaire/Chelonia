@@ -1,5 +1,5 @@
 
-package ch.uprisesoft.chelonia.ide.console;
+package ch.uprisesoft.chelonia.ide.console2;
 
 import com.badlogic.gdx.utils.Array;
 

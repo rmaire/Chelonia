@@ -1,7 +1,8 @@
 package ch.uprisesoft.chelonia;
 
 import ch.uprisesoft.chelonia.ide.console.Console;
-import ch.uprisesoft.chelonia.ide.console.LogLevel;
+import ch.uprisesoft.chelonia.ide.console.OutputLevel;
+import ch.uprisesoft.chelonia.ide.console2.Console2;
 import ch.uprisesoft.chelonia.turtle.TurtleManager;
 import ch.uprisesoft.chelonia.turtle.TurtlePosition;
 import ch.uprisesoft.yali.runtime.interpreter.UnthreadedInterpreter;
@@ -38,7 +39,7 @@ public class IdeScreen implements Screen, InputGenerator, OutputObserver {
 //    Locale locale = new Locale("de", "CH");
 //    I18NBundle messages = I18NBundle.createBundle(baseFileHandle, locale);
 
-    private Console console;
+    private Console2 console;
 
     private Stage main;
 
@@ -132,18 +133,18 @@ public class IdeScreen implements Screen, InputGenerator, OutputObserver {
 
     @Override
     public void inform(String output) {
-        console.log(output.trim(), LogLevel.DEFAULT);
+//        console.log(output.trim(), LogLevel.DEFAULT);
     }
 
     @Override
     public void show() {
         main = new Stage(new ScreenViewport());
         
-        console = new Console(mainSkin, yali, main);
+        console = new Console2(mainSkin, yali, main);
         console.setPosition(0, 0);
         console.setSize(Gdx.graphics.getWidth(), REPL_HEIGHT);
-        console.setTitle("Commands");
-        console.getWindow().setColor(1f, 1f, 1f, 0.5f);
+//        console.setTitle("Commands");
+//        console.getWindow().setColor(1f, 1f, 1f, 0.5f);
         
         initEditor();
         sizeEditor();
@@ -271,9 +272,9 @@ public class IdeScreen implements Screen, InputGenerator, OutputObserver {
 
     public void toggleRepl() {
         if (replCollapsed) {
-            main.addActor(console.getWindow());
+//            main.addActor(console.getWindow());
         } else {
-            console.getWindow().addAction(Actions.removeActor());
+//            console.getWindow().addAction(Actions.removeActor());
         }
         replCollapsed = !replCollapsed;
     }
@@ -281,7 +282,7 @@ public class IdeScreen implements Screen, InputGenerator, OutputObserver {
     private void sizeRepl() {
         main.getViewport().update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         if (!replCollapsed) {
-            console.setSize(Gdx.graphics.getWidth(), REPL_HEIGHT);
+//            console.setSize(Gdx.graphics.getWidth(), REPL_HEIGHT);
         }
     }
 
