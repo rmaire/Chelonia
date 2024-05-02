@@ -32,9 +32,9 @@ import java.util.Arrays;
  */
 public class TurtleManager implements ProcedureProvider {
 
-    Turtle2 turtle = new Turtle2();
+    Turtle turtle = new Turtle();
 
-    public Turtle2 getTurtle() {
+    public Turtle getTurtle() {
         return turtle;
     }
 
